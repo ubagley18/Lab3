@@ -1,6 +1,6 @@
 /*!
 ** @file
-** @version 2.0
+** @version 3.0
 ** @brief
 **         Main module.
 **         This module implements serial port (USB) communications with a PC.
@@ -13,7 +13,7 @@
 */
 /* MODULE main */
 
-// TODO: Upgrade to Lab 2 functionality (copy Lab 1 main and use that as a starting point).
+// TODO: Upgrade to Lab 3 functionality (copy Lab 2 main and use that as a starting point).
 
 /*!
  * @brief Main function
