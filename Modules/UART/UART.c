@@ -12,6 +12,7 @@
 #include "FIFO\FIFO.h"
 #include "fsl_port.h"
 
+
 const port_pin_config_t UART_PORT_PIN_CONFIG =
 {
 		.pullSelect = kPORT_PullDisable,
