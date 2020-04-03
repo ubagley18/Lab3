@@ -27,12 +27,14 @@
 
 // Version number
 // TODO: Define the major version number and minor version number using const.
-#define MAJOR_VERSION_NB 1
-#define MINOR_VERSION_NB 0
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
+
+#define PACKET_CMD_ACK 0x80
 
 // Baud rate
 // TODO: Define the UART baud rate using const.
-//#define const baudRate 38400
+#define BAUD_RATE 38400
 
 // Commands
 // TODO: Define the commands using enum.
@@ -43,17 +45,17 @@ enum Packet_Command
 	NUMBER_CMD = 0x0B
 };
 
-enum Packet_Command_ACK
+/*enum Packet_Command_ACK
 {
-	STARTUP_CMD = 0x84,
-	VERSION_CMD = 0X89,
-	NUMBER_CMD = 0x8B
+	STARTUP_CMD_ACK = 0x84,
+	VERSION_CMD_ACK = 0X89,
+	NUMBER_CMD_ACK = 0x8B
 };
-
+*/
 // ----------------------------------------
 // Private global variables
 // TODO: Define the MCU number.
-uint16union_t MCU_Nb = 1291;
+uint16union_t MCU_Nb;
 
 /*! @brief Sends startup packets to the PC.
  *
@@ -65,7 +67,7 @@ static bool SendStartupPackets(void)
   // TODO: Send startup packets to the PC.
 	// See Simple Serial Communication Protocol for parameters
 	if (Packet_Put(STARTUP_CMD, 0, 0, 0) &&
-			Packet_Put(VERSION_CMD, 'v', MAJOR_VERSION_NB, MINOR_VERSION_NB) &&
+			Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR) &&
 			Packet_Put(NUMBER_CMD, 1, MCU_Nb.s.Lo, MCU_Nb.s.Hi))
 		return true;
 	else
@@ -82,7 +84,9 @@ static bool MCUInit(void)
   BOARD_InitBootClocks();
 
   // TODO: Initialize any modules that need to be initialized.
+  Packet_Init(SystemCoreClock, BAUD_RATE);// SystemCoreClock from system_MK64F12.c
 
+  return true;
 }
 
 /*! @brief Respond to a Startup packet sent from the PC.
@@ -102,6 +106,32 @@ static bool HandleStartupPacket(void)
 		return false;
 
 }
+
+static bool HandleVersionPacket(void)
+{
+  // TODO: Respond to a startup packet sent from the PC
+	// call Packet_Put(CMD_STARTUP); // not a good idea to call this here
+	// probably a better way to do it --> SendStartupPackets();
+	if((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 'CR'))
+		return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
+}
+
+static bool HandleNumberPacket(void)
+{
+	uint16union_t new_MCU_Nb;
+
+	if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
+		return Packet_Put(NUMBER_CMD, 1, MCU_Nb.s.Lo, MCU_Nb.s.Hi);
+	else if ((Packet_Parameter1 == 2) && (Packet_Parameter2 == new_MCU_Nb.s.Lo) && (Packet_Parameter3 == new_MCU_Nb.s.Hi))
+	{
+		MCU_Nb.s.Lo = new_MCU_Nb.s.Lo;
+		MCU_Nb.s.Hi = new_MCU_Nb.s.Hi;
+		return Packet_Put(NUMBER_CMD, 2, MCU_Nb.s.Lo, MCU_Nb.s.Hi);
+	}
+	else
+		return false;
+}
+
 
 // TODO: Create individual functions to handle each command sent from the PC, similar to HandleStartupPacket above.
 
@@ -142,7 +172,7 @@ static void HandlePackets(void)
 
 	if (success) //If success returns true then the packet has been handled successfully - so we return with an ACK
 	{
-		Packet_Command |= Packet_Command_ACK
+		Packet_Command |= PACKET_CMD_ACK;
 		return Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
 	}
 	else
