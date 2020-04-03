@@ -25,6 +25,13 @@
 // Packet handling
 #include "Packet\packet.h"
 
+//Function Prototypes
+static bool SendStartupPackets(void);
+static bool HandleStartupPacket(void);
+static void HandlePackets(void);
+static bool HandleVersionPacket(void);
+static bool HandleNumberPacket(void);
+
 // Version number
 // TODO: Define the major version number and minor version number using const.
 #define VERSION_MAJOR 1
@@ -173,10 +180,10 @@ static void HandlePackets(void)
 	if (success) //If success returns true then the packet has been handled successfully - so we return with an ACK
 	{
 		Packet_Command |= PACKET_CMD_ACK;
-		return Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
 	}
 	else
-		return Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
 
 }
 
