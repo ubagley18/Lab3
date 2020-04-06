@@ -49,18 +49,51 @@ enum Packet_Command
 static uint16union_t Mcu_Nb;
 
 //Function Prototypes
-static bool SendStartupPackets(void);
-static bool HandleStartupPacket(void);
-static void HandlePackets(void);
-static bool HandleVersionPacket(void);
-static bool HandleNumberPacket(void);
-
 
 /*! @brief Sends startup packets to the PC.
  *
  *  @return bool - TRUE if sending the startup packets was successful.
  *  @note Assumes that MCUInit has been called successfully.
  */
+static bool SendStartupPackets(void);
+
+
+/*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
+ *
+ *  @return bool - TRUE if sending the startup packets was successful.
+ */
+static bool MCUInit(void);
+
+
+/*! @brief Respond to a Startup packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static bool HandleStartupPacket(void);
+
+
+/*! @brief Respond to a Version packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
+static bool HandleVersionPacket(void);
+
+
+/*! @brief Respond to a MCU Number packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
+static bool HandleNumberPacket(void);
+
+
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
+
+
 static bool SendStartupPackets(void)
 {
  Packet_Put(STARTUP_CMD, 0, 0, 0);
@@ -69,10 +102,7 @@ static bool SendStartupPackets(void)
  return true;
 }
 
-/*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
- *
- *  @return bool - TRUE if sending the startup packets was successful.
- */
+
 static bool MCUInit(void)
 {
   BOARD_InitPins();
@@ -84,11 +114,7 @@ static bool MCUInit(void)
   return true;
 }
 
-/*! @brief Respond to a Startup packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- *  @note Assumes that MCUInit has been called successfully.
- */
+
 static bool HandleStartupPacket(void)
 {
   if (Packet_Parameter1 == 0)
@@ -100,10 +126,7 @@ static bool HandleStartupPacket(void)
 	return false;
 }
 
-/*! @brief Respond to a Version packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- */
+
 static bool HandleVersionPacket(void)
 {
   if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
@@ -112,10 +135,7 @@ static bool HandleVersionPacket(void)
 	return false;
 }
 
-/*! @brief Respond to a MCU Number packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- */
+
 static bool HandleNumberPacket(void)
 {
   uint16union_t new_Mcu_Nb;
@@ -138,10 +158,7 @@ static bool HandleNumberPacket(void)
 	return false;
 }
 
-/*! @brief Respond to packets sent from the PC.
- *
- *  @note Assumes that MCUInit has been called successfully.
- */
+
 static void HandlePackets(void)
 {
   bool success;
