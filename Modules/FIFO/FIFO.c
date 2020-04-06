@@ -1,6 +1,6 @@
 /*! @file
  *
- *  @brief Routines to implement a FIFO buffer.
+ *  @brief Routines to for a FIFO buffer.
  *
  *  This contains the functionality for a byte-wide FIFO.
  *
