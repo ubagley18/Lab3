@@ -99,7 +99,6 @@ static bool HandleStartupPacket(void)
   }
   else
 	return false;
-
 }
 
 /*! @brief Respond to a Version packet sent from the PC.
@@ -147,9 +146,6 @@ static bool HandleNumberPacket(void)
 static void HandlePackets(void)
 {
   bool success;
-  //1 0000 0100
-  //1 0000 0000
-  //0 0000 0001
   uint8_t command = Packet_Command; // Store the value of Packet_Command so ACK may be manipulated
 
   // If the command has an ACK request, remove it for the switch statement
