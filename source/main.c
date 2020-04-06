@@ -25,6 +25,8 @@
 // Packet handling
 #include "Packet\packet.h"
 
+#define PACKET_CMD_ACK 0x80
+
 //Function Prototypes
 static bool SendStartupPackets(void);
 static bool HandleStartupPacket(void);
@@ -34,14 +36,13 @@ static bool HandleNumberPacket(void);
 
 // Version number
 // TODO: Define the major version number and minor version number using const.
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 0
+const uint8_t VERSION_MAJOR = 0x01; //1
+const uint8_t VERSION_MINOR = 0x00; //0
 
-#define PACKET_CMD_ACK 0x80
 
 // Baud rate
 // TODO: Define the UART baud rate using const.
-#define BAUD_RATE 38400
+const uint16_t BAUD_RATE = 38400;
 
 // Commands
 // TODO: Define the commands using enum.
@@ -52,17 +53,10 @@ enum Packet_Command
 	NUMBER_CMD = 0x0B
 };
 
-/*enum Packet_Command_ACK
-{
-	STARTUP_CMD_ACK = 0x84,
-	VERSION_CMD_ACK = 0X89,
-	NUMBER_CMD_ACK = 0x8B
-};
-*/
 // ----------------------------------------
 // Private global variables
 // TODO: Define the MCU number.
-uint16union_t MCU_Nb;
+static uint16union_t Mcu_Nb;
 
 /*! @brief Sends startup packets to the PC.
  *
@@ -73,12 +67,10 @@ static bool SendStartupPackets(void)
 {
   // TODO: Send startup packets to the PC.
 	// See Simple Serial Communication Protocol for parameters
-	if (Packet_Put(STARTUP_CMD, 0, 0, 0) &&
-			Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR) &&
-			Packet_Put(NUMBER_CMD, 1, MCU_Nb.s.Lo, MCU_Nb.s.Hi))
-		return true;
-	else
-		return false;
+	Packet_Put(STARTUP_CMD, 0, 0, 0);
+	Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
+	Packet_Put(NUMBER_CMD, 1, Mcu_Nb.s.Lo, Mcu_Nb.s.Hi);
+	return true;
 }
 
 /*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
@@ -92,6 +84,7 @@ static bool MCUInit(void)
 
   // TODO: Initialize any modules that need to be initialized.
   Packet_Init(SystemCoreClock, BAUD_RATE);// SystemCoreClock from system_MK64F12.c
+  Mcu_Nb.l = 1291;
 
   return true;
 }
@@ -104,7 +97,7 @@ static bool MCUInit(void)
 static bool HandleStartupPacket(void)
 {
   // TODO: Respond to a startup packet sent from the PC
-	if (Packet_Parameter1 && Packet_Parameter2 && Packet_Parameter3 == 0)
+	if (Packet_Parameter1 == 0)
 	{
 		SendStartupPackets();
 		return true;
@@ -119,21 +112,26 @@ static bool HandleVersionPacket(void)
   // TODO: Respond to a startup packet sent from the PC
 	// call Packet_Put(CMD_STARTUP); // not a good idea to call this here
 	// probably a better way to do it --> SendStartupPackets();
-	if((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 'CR'))
+	if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
 		return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
+	else
+		return false;
 }
 
 static bool HandleNumberPacket(void)
 {
-	uint16union_t new_MCU_Nb;
+	uint16union_t new_Mcu_Nb;
+	new_Mcu_Nb.s.Lo = Packet_Parameter2;
+	new_Mcu_Nb.s.Hi = Packet_Parameter3;
 
 	if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
-		return Packet_Put(NUMBER_CMD, 1, MCU_Nb.s.Lo, MCU_Nb.s.Hi);
-	else if ((Packet_Parameter1 == 2) && (Packet_Parameter2 == new_MCU_Nb.s.Lo) && (Packet_Parameter3 == new_MCU_Nb.s.Hi))
+		return Packet_Put(NUMBER_CMD, 1, Mcu_Nb.s.Lo, Mcu_Nb.s.Hi);
+	else if ((Packet_Parameter1 == 2) && (Packet_Parameter2 == new_Mcu_Nb.s.Lo) && (Packet_Parameter3 == new_Mcu_Nb.s.Hi))
 	{
-		MCU_Nb.s.Lo = new_MCU_Nb.s.Lo;
-		MCU_Nb.s.Hi = new_MCU_Nb.s.Hi;
-		return Packet_Put(NUMBER_CMD, 2, MCU_Nb.s.Lo, MCU_Nb.s.Hi);
+		// Replace old Nb with new Nb
+		Mcu_Nb.s.Lo = new_Mcu_Nb.s.Lo;
+		Mcu_Nb.s.Hi = new_Mcu_Nb.s.Hi;
+		return Packet_Put(NUMBER_CMD, 2, Mcu_Nb.s.Lo, Mcu_Nb.s.Hi);
 	}
 	else
 		return false;
@@ -161,29 +159,36 @@ static void HandlePackets(void)
   // 5. If an ACK was requestedm then send an ACK/NAK packet based on the success of the command handler.
 
 	bool success;
+	//1 0000 0100
+	//1 0000 0000
+	//0 0000 0001
+	uint8_t command = Packet_Command; // Store the value of Packet_Command so ACK may be manipulated
 
-	Packet_Get();
+	if ((Packet_Command & PACKET_CMD_ACK) == PACKET_CMD_ACK) // If the command has an ACK request, remove it for the switch statement
+		Packet_Command &= ~PACKET_CMD_ACK;
 
 	switch (Packet_Command)
-	{
-		case STARTUP_CMD:
-			success = HandleStartupPacket();
-		break;
-		case VERSION_CMD:
-			success = HandleVersionPacket();
-		break;
-		case NUMBER_CMD:
-			success = HandleNumberPacket();
-		break;
-	}
+		{
+			case STARTUP_CMD:
+				success = HandleStartupPacket();
+			break;
+			case VERSION_CMD:
+				success = HandleVersionPacket();
+			break;
+			case NUMBER_CMD:
+				success = HandleNumberPacket();
+			break;
+			default:
+				return;
+		}
 
-	if (success) //If success returns true then the packet has been handled successfully - so we return with an ACK
+	if ((success) && ((command & PACKET_CMD_ACK) == PACKET_CMD_ACK)) //If success returns true then the packet has been handled successfully - we return with an ACK if it was requested
 	{
-		Packet_Command |= PACKET_CMD_ACK;
-		Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
 	}
 	else
-		Packet_Put(Packet_Command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		return;
+
 
 }
 
@@ -198,7 +203,7 @@ int main(void)
     // TODO:
     // 1. Poll the UART.
     // 2. Handle any packets received.
-  	if(Packet_Get())
+  	if (Packet_Get())
   		HandlePackets();
 
   	UART_Poll();
