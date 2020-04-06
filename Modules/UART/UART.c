@@ -4,7 +4,7 @@
  *
  *  This contains the functions for operating the UART (serial port).
  *
- *  @author Uldis Bagley
+ *  @author Uldis Bagley and Prashant Shreshtha
  *  @date 2020-03-18
  */
 #include "UART.h"
