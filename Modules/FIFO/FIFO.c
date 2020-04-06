@@ -4,8 +4,8 @@
  *
  *  This contains the functionality for a byte-wide FIFO.
  *
- *  @author PMcL
- *  @date 2015-07-23
+ *  @author Uldis Bagley and Prashant Shreshtha
+ *  @date 2020-03-28
  */
 
 #include "FIFO.h"
