@@ -16,6 +16,7 @@
 */
 /* MODULE main */
 
+
 #include "clock_config.h"
 #include "pin_mux.h"
 
@@ -28,7 +29,12 @@
 // Packet handling
 #include "Packet\packet.h"
 
+
+// Commands
 #define PACKET_CMD_ACK 0x80
+#define STARTUP_CMD 0x04
+#define VERSION_CMD 0X09
+#define NUMBER_CMD 0x0B
 
 // Version number
 const uint8_t VERSION_MAJOR = 0x01; //1
@@ -37,23 +43,59 @@ const uint8_t VERSION_MINOR = 0x00; //0
 // Baud rate
 const uint16_t BAUD_RATE = 38400;
 
-// Commands
-enum Packet_Command
-{
-	STARTUP_CMD = 0x04,
-	VERSION_CMD = 0X09,
-	NUMBER_CMD = 0x0B
-};
+
+// Public Global variables
+TPacket Packet;
+
 
 //Private global variables
 static uint16union_t Mcu_Nb;
 
+
 //Function Prototypes
+
+/*! @brief Sends startup packets to the PC.
+ *
+ *  @return bool - TRUE if sending the startup packets was successful.
+ *  @note Assumes that MCUInit has been called successfully.
+ */
 static bool SendStartupPackets(void);
+
+
+/*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
+ *
+ *  @return bool - TRUE if sending the startup packets was successful.
+ */
+static bool MCUInit(void);
+
+
+/*! @brief Respond to a Startup packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ *  @note Assumes that MCUInit has been called successfully.
+ */
 static bool HandleStartupPacket(void);
-static void HandlePackets(void);
+
+
+/*! @brief Respond to a Version packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
 static bool HandleVersionPacket(void);
+
+
+/*! @brief Respond to a MCU Number packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
 static bool HandleNumberPacket(void);
+
+
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
 
 
 /*! @brief Sends startup packets to the PC.

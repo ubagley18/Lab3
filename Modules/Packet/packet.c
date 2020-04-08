@@ -15,11 +15,12 @@
 //
 
 // Packet structure
-uint8_t Packet_Command,    /*!< The packet's command */
-		Packet_Parameter1, /*!< The packet's 1st parameter */
-		Packet_Parameter2, /*!< The packet's 2nd parameter */
-		Packet_Parameter3, /*!< The packet's 3rd parameter */
-		Packet_Checksum;   /*!< The packet's checksum */
+
+//uint8_t Packet_Command,    /*!< The packet's command */
+//		Packet_Parameter1, /*!< The packet's 1st parameter */
+//		Packet_Parameter2, /*!< The packet's 2nd parameter */
+//		Packet_Parameter3, /*!< The packet's 3rd parameter */
+//		Packet_Checksum;   /*!< The packet's checksum */
 
 static uint8_t currentState = 0; // current state of FSM
 
