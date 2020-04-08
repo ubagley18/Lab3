@@ -12,6 +12,11 @@
 #include "FIFO\FIFO.h"
 #include "fsl_port.h"
 
+//Transmitter is driven by baud rate clock divided by 16
+//Receiver has aquisition rate of 16 samples per bit time
+static const uint8_t SAMPLE_BAUD_RATE = 16;
+//Baud Rate Fractional Divisor for baud rate of 38400 with 0.047% error
+static const uint8_t BAUD_RATE_DIVISOR = 32;
 
 const port_pin_config_t UART_PORT_PIN_CONFIG =
 {
@@ -63,10 +68,10 @@ bool UART_Init(const uint32_t moduleClk, const uint32_t baudRate)
 	 */
 
 	// SBR and fine adjust calculations
-	sbr.l = moduleClk / (16 * baudRate); // Fills union address with sbr value (whole number)
+	sbr.l = moduleClk / (SAMPLE_BAUD_RATE * baudRate); // Fills union address with sbr value (whole number)
 
-	brfd = ((moduleClk / ((float)16 * baudRate)) - (16 * sbr.l));
-	brfa = brfd * 32;
+	brfd = ((moduleClk / ((float)SAMPLE_BAUD_RATE * baudRate)) - (SAMPLE_BAUD_RATE * sbr.l));
+	brfa = brfd * BAUD_RATE_DIVISOR;
 
 	// Set SBR registers
 	UART0->BDH |= UART_BDH_SBR(sbr.s.Hi);
@@ -84,18 +89,12 @@ bool UART_Init(const uint32_t moduleClk, const uint32_t baudRate)
 
 bool UART_InChar(uint8_t* const dataPtr)
 {
-	if(FIFO_Get(&RxFIFO, dataPtr))
-		return true;
-	else
-		return false;
+	return FIFO_Get(&RxFIFO, dataPtr);
 }
 
 bool UART_OutChar(const uint8_t data)
 {
-	if(FIFO_Put(&TxFIFO, data))
-		return true;
-	else
-		return false;
+	return FIFO_Put(&TxFIFO, data);
 }
 
 void UART_Poll(void)
