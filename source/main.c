@@ -79,7 +79,7 @@ static bool MCUInit(void)
   BOARD_InitBootClocks();
 
   Packet_Init(SystemCoreClock, BAUD_RATE);// SystemCoreClock from system_MK64F12.c
-  Mcu_Nb.l = 1291;
+  Mcu_Nb.l = 1291; // Init student number to fill union
 
   return true;
 }
@@ -91,13 +91,13 @@ static bool MCUInit(void)
  */
 static bool HandleStartupPacket(void)
 {
-  if (Packet_Parameter1 == 0)
+  if ((Packet_Parameter1 == 0) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
   {
     SendStartupPackets();
 	return true;
   }
   else
-	return false;
+  	return false;
 }
 
 /*! @brief Respond to a Version packet sent from the PC.
@@ -109,7 +109,7 @@ static bool HandleVersionPacket(void)
   if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
     return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
   else
-	return false;
+  	return false;
 }
 
 /*! @brief Respond to a MCU Number packet sent from the PC.
@@ -133,9 +133,8 @@ static bool HandleNumberPacket(void)
 
   return Packet_Put(NUMBER_CMD, 2, Mcu_Nb.s.Lo, Mcu_Nb.s.Hi);
   }
-
   else
-	return false;
+  	return false;
 }
 
 /*! @brief Respond to packets sent from the PC.
@@ -151,6 +150,7 @@ static void HandlePackets(void)
   if ((Packet_Command & PACKET_CMD_ACK) == PACKET_CMD_ACK)
     Packet_Command &= ~PACKET_CMD_ACK;
 
+  // Handle packets
   switch (Packet_Command)
   {
     case STARTUP_CMD:
@@ -175,7 +175,7 @@ static void HandlePackets(void)
     Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
   }
   else
-	return;
+  	return;
 }
 
 /*!
