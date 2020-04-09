@@ -1,10 +1,10 @@
-/*! @file
+/*! @file UART.c
  *
  *  @brief I/O routines for UART communications on the TWR-K70F120M.
  *
  *  This contains the functions for operating the UART (serial port).
  *
- *  @author Uldis Bagley and Prashant Shreshtha
+ *  @author Uldis Bagley and Prashant Shrestha
  *  @date 2020-03-18
  */
 #include "UART.h"

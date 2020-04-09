@@ -1,10 +1,10 @@
-/*! @file
+/*! @file packet.c
  *
  *  @brief Routines to implement packet encoding and decoding for the serial port.
  *
  *  This contains the functions for implementing the Simple Serial Communication Protocol.
  *
- *  @author Prashant Shrestha
+ *  @author Uldis Bagley and Prashant Shrestha
  *  @date 2020-04-1
  */
 
