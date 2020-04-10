@@ -29,7 +29,12 @@
 // Packet handling
 #include "Packet\packet.h"
 
+
+// Commands
 #define PACKET_CMD_ACK 0x80
+#define STARTUP_CMD 0x04
+#define VERSION_CMD 0X09
+#define NUMBER_CMD 0x0B
 
 // Version number
 const uint8_t VERSION_MAJOR = 0x01; //1
@@ -38,18 +43,60 @@ const uint8_t VERSION_MINOR = 0x00; //0
 // Baud rate
 const uint16_t BAUD_RATE = 38400;
 
-// Commands
-enum Packet_Command
-{
-	STARTUP_CMD = 0x04,
-	VERSION_CMD = 0X09,
-	NUMBER_CMD = 0x0B
-};
+
+// Public Global variables
+TPacket Packet;
+
 
 //Private global variables
 static uint16union_t Mcu_Nb;
 
+
 //Function Prototypes
+
+/*! @brief Sends startup packets to the PC.
+ *
+ *  @return bool - TRUE if sending the startup packets was successful.
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static bool SendStartupPackets(void);
+
+
+/*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
+ *
+ *  @return bool - TRUE if sending the startup packets was successful.
+ */
+static bool MCUInit(void);
+
+
+/*! @brief Respond to a Startup packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static bool HandleStartupPacket(void);
+
+
+/*! @brief Respond to a Version packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
+static bool HandleVersionPacket(void);
+
+
+/*! @brief Respond to a MCU Number packet sent from the PC.
+ *
+ *  @return bool - TRUE if the packet was handled successfully.
+ */
+static bool HandleNumberPacket(void);
+
+
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
+
 
 /*! @brief Sends startup packets to the PC.
  *
@@ -110,7 +157,7 @@ static bool MCUInit(void)
   BOARD_InitBootClocks();
 
   Packet_Init(SystemCoreClock, BAUD_RATE);// SystemCoreClock from system_MK64F12.c
-  Mcu_Nb.l = 1291;
+  Mcu_Nb.l = 1291; // Init student number to fill union
 
   return true;
 }
@@ -118,13 +165,13 @@ static bool MCUInit(void)
 
 static bool HandleStartupPacket(void)
 {
-  if (Packet_Parameter1 == 0)
+  if ((Packet_Parameter1 == 0) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
   {
     SendStartupPackets();
 	return true;
   }
   else
-	return false;
+  	return false;
 }
 
 
@@ -133,7 +180,7 @@ static bool HandleVersionPacket(void)
   if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
     return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
   else
-	return false;
+  	return false;
 }
 
 
@@ -154,9 +201,8 @@ static bool HandleNumberPacket(void)
 
   return Packet_Put(NUMBER_CMD, 2, Mcu_Nb.s.Lo, Mcu_Nb.s.Hi);
   }
-
   else
-	return false;
+  	return false;
 }
 
 
@@ -169,6 +215,7 @@ static void HandlePackets(void)
   if ((Packet_Command & PACKET_CMD_ACK) == PACKET_CMD_ACK)
     Packet_Command &= ~PACKET_CMD_ACK;
 
+  // Handle packets
   switch (Packet_Command)
   {
     case STARTUP_CMD:
@@ -193,7 +240,7 @@ static void HandlePackets(void)
     Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
   }
   else
-	return;
+  	return;
 }
 
 /*!
