@@ -35,6 +35,8 @@
 #define STARTUP_CMD 0x04
 #define VERSION_CMD 0X09
 #define NUMBER_CMD 0x0B
+#define FLASH_PROGRAM_CMD 0x07
+#define FLASH_READ_CMD 0x08
 
 // Version number
 const uint8_t VERSION_MAJOR = 0x01; //1
@@ -96,7 +98,7 @@ static bool HandleNumberPacket(void);
  *  @note Assumes that MCUInit has been called successfully.
  */
 static void HandlePackets(void);
-
+static bool HandleFlashProgram(void);
 
 /*! @brief Sends startup packets to the PC.
  *
@@ -179,6 +181,20 @@ static bool HandleNumberPacket(void)
   	return false;
 }
 
+static bool HandleFlashProgram(void)
+{
+	if ((Packet_Parameter1 >= 0) && (Packet_Parameter1 <= 7) && (Packet_Parameter2 == 0))
+	{
+		//return flash write
+	}
+
+	else if ((Packet_Parameter1 >=8) && (Packet_Parameter2 == 0))
+	{
+		//return erase sector
+	}
+
+	return false;
+}
 /*! @brief Respond to packets sent from the PC.
  *
  *  @note Assumes that MCUInit has been called successfully.
@@ -206,6 +222,15 @@ static void HandlePackets(void)
 	case NUMBER_CMD:
 	  success = HandleNumberPacket();
 	  break;
+
+	case FLASH_PROGRAM_CMD:
+
+		success = HandleFlashProgram();
+		//success = functioncall
+		break;
+	case FLASH_READ_CMD:
+		//success = functioncall
+		break;
 
 	default:
 	  return;
