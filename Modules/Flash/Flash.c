@@ -9,6 +9,50 @@
  */
 
 #include "Flash.h"
+#include "fsl_common.h"
+#include "fsl_port.h"
+
+
+#define NB_ADDRESS_REG 3
+#define NB_DATA_REG  8
+
+typedef struct
+{
+  uint8_t command;
+  union
+  {
+    uint32_t combined;
+    struct
+    {
+      uint8_t flashAddress0;
+      uint8_t flashAddress1;
+      uint8_t flashAddress2;
+      uint8_t flashAddress3;
+    } separate;
+  } address;  // The first 4 FCCOB registers (0-3)
+  union
+  {
+    uint64_t combined;
+    struct
+    {
+      uint8_t dataByte0;
+      uint8_t dataByte1;
+      uint8_t dataByte2;
+      uint8_t dataByte3;
+      uint8_t dataByte4;
+      uint8_t dataByte5;
+      uint8_t dataByte6;
+      uint8_t dataByte7;
+    } separate;
+  } data;  // The last 8 FCCOB registers (4-B)
+} FCCOB_t;
+
+const uint8_t HALF_WORD_ALIGNED = 0;
+const uint8_t PHRASE_ALIGNED = 0;
+const uint8_t WORD_ALIGNED = 0;
+const uint8_t WRITE = 0x07;
+FCCOB_t* FCCOB;
+
 
 // Private functions:
 static bool LaunchCommand(FCCOB_t* commonCommandObject);
@@ -18,32 +62,13 @@ static bool ModifyPhrase(const uint32_t address, const uint64union_t phrase);
 
 // I think FCCOB is RAM buffer that allows us to change 1 or more bytes of information while the Flash sector is being erased. Then we write the FCCOB data with the change into the Flash
 
-typedef struct
-{
 
-
-}FCCOB_t;
-
-const uint8_t HALF_WORD_ALIGNED = 0;
-const uint8_t WORD_ALIGNED = 0;
-const uint8_t PHRASE_ALIGNED = 0;
 
 bool Flash_Init(void)
 {
 	// FSTAT_CCIF flag will be used during erasing operations
 	// Nothing to initialize
 	return true;
-}
-
-static bool LaunchCommand(FCCOB_t* commonCommandObject)
-{
-	// if((FSTAT_ACCERR && FSTAT_FPVIOL == 0) && (FSTAT_CCIF == 1)) then run FCCOB changes
-}
-
-
-static bool WritePhrase(const uint32_t address, const uint64union_t phrase)
-{
-
 }
 
 
@@ -74,61 +99,67 @@ static bool ModifyPhrase(const uint32_t address, const uint64union_t phrase)
 bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
 {
 	// Allocate variable to space in flash memory for the pointer address
-	uint8_t allocation[7]; // <---- THIS will become address placements in the FCCOB struct
+	// uint8_t allocation[7]; // <---- THIS will become address placements in the FCCOB struct
 	int i;
-	const FLASH_START = 0;
-	const FLASH_END = FLASH_DATA_END - FLASH_DATA_START;
+	const uint8_t FLASH_START = 0;
+	const uint8_t FLASH_END = FLASH_DATA_END - FLASH_DATA_START;
 
-	switch (size) // switch case with respect to the size of variable in bytes
+	for (i = FLASH_START; i < (FLASH_END + 1); i+= size)
 	{
-		case 1:
-			for (i = FLASH_START; i < (FLASH_END + 1); i+= size)
-			{
-				// Check if location of 'i' is empty
-				if (allocation[i] == 0) // if place is empty we fill with our value
-				{
-					allocation[i] = *variable; // allocate address for data to reside
-					return true;
-				}
-				else if (allocation[i] != 0) // if allocation is full we increment
-					break;
-				else // if all places are full we return false
-					return false;
-			}
-
-		case 2:
-			for (i = FLASH_START; i < (FLASH_END + 1); i+= size)
-			{
-				// Check if location of 'i' is empty
-				if (allocation[i] == 0) // if place is empty we fill with our value
-				{
-					allocation[i] = *variable; // allocate address for data to reside
-					return true;
-				}
-				else if (allocation[i] != 0) // if allocation is full we increment
-					break;
-				else // if all places are full we return false
-					return false;
-			}
-
-		case 4:
-			for (i = FLASH_START; i < (FLASH_END + 1); i+= size)
-			{
-				// Check if location of 'i' is empty
-				if (allocation[i] == 0) // if place is empty we fill with our value
-				{
-					allocation[i] = *variable; // allocate address for data to reside
-					return true;
-				}
-				else if (allocation[i] != 0) // if allocation is full we increment
-					break;
-				else // if all places are full we return false
-					return false;
-			}
-
-		default:
+		// Check if location of 'i' is empty
+		if (FCCOB->data[i] == 0) // if place is empty we fill with our value
+		{
+			FCCOB->data[i] = *variable; // allocate address for data to reside
+			return true;
+		}
+		else if (FCCOB->data[i] != 0) // if allocation is full we increment
+			continue;
+		else // if all places are full we return false
 			return false;
 	}
+}
+
+
+static bool LaunchCommand(FCCOB_t* commonCommandObject)
+{
+	// write parameters into registers with big endian notation
+  FTFE->FCCOB0 = commonCommandObject->command;
+  FTFE->FCCOB1 = commonCommandObject->address.separate.flashAddress2;
+  FTFE->FCCOB2 = commonCommandObject->address.separate.flashAddress1;
+  FTFE->FCCOB3 = commonCommandObject->address.separate.flashAddress0;
+  FTFE->FCCOB4 = commonCommandObject->data.separate.dataByte7;
+  FTFE->FCCOB5 = commonCommandObject->data.separate.dataByte6;
+  FTFE->FCCOB6 = commonCommandObject->data.separate.dataByte5;
+  FTFE->FCCOB7 = commonCommandObject->data.separate.dataByte4;
+  FTFE->FCCOB8 = commonCommandObject->data.separate.dataByte3;
+  FTFE->FCCOB9 = commonCommandObject->data.separate.dataByte2;
+  FTFE->FCCOBA = commonCommandObject->data.separate.dataByte1;
+  FTFE->FCCOBB = commonCommandObject->data.separate.dataByte0;
+
+	FTFE->FSTAT = FTFE_FSTAT_CCIF_MASK; // clear the CCIF to launch the command
+	// WHAT DOES THE DIAGRAM ON P702 MEAN BY MORE PARAMETERS?
+
+}
+
+
+static bool WritePhrase(const uint32_t address, const uint64union_t phrase)
+{
+	// Wait for the CCIF to be set so a command can be executed
+	while (FTFE->FSTAT != FTFE_FSTAT_CCIF_MASK);
+
+	// clear protection violation and access error flag if set
+	if ((FTFE->FSTAT & FTFE_FSTAT_FPVIOL_MASK) == FTFE_FSTAT_FPVIOL_MASK)
+		FTFE->FSTAT = FTFE_FSTAT_FPVIOL_MASK;
+	if ((FTFE->FSTAT & FTFE_FSTAT_ACCERR_MASK) == FTFE_FSTAT_ACCERR_MASK)
+			FTFE->FSTAT = FTFE_FSTAT_ACCERR_MASK;
+
+	// Load FCCOB struct with values
+
+	FCCOB->command = WRITE;
+	FCCOB->address.combined = address;
+	FCCOB->data.combined = phrase.l;
+
+	return LaunchCommand(FCCOB);
 }
 
 
