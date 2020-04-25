@@ -34,7 +34,7 @@ bool Flash_Init(void)
  */
 bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
 {
-
+	return true; // just for testing purposes
 }
 
 /*! @brief Writes a 32-bit number to Flash.
@@ -46,7 +46,7 @@ bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
  */
 bool Flash_Write32(volatile uint32_t* const address, const uint32_t data)
 {
-
+	return true; // just for testing purposes
 }
 
 /*! @brief Writes a 16-bit number to Flash.
@@ -58,7 +58,7 @@ bool Flash_Write32(volatile uint32_t* const address, const uint32_t data)
  */
 bool Flash_Write16(volatile uint16_t* const address, const uint16_t data)
 {
-
+	return true; // just for testing purposes
 }
 
 /*! @brief Writes an 8-bit number to Flash.
@@ -70,7 +70,7 @@ bool Flash_Write16(volatile uint16_t* const address, const uint16_t data)
  */
 bool Flash_Write8(volatile uint8_t* const address, const uint8_t data)
 {
-
+	return true; // just for testing purposes
 }
 
 /*! @brief Erases the entire Flash sector.
@@ -80,6 +80,6 @@ bool Flash_Write8(volatile uint8_t* const address, const uint8_t data)
  */
 bool Flash_Erase(void)
 {
-
+	return true; // just for testing purposes
 }
 
