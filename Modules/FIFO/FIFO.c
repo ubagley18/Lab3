@@ -1,10 +1,10 @@
-/*! @file
+/*! @file FIFO.c
  *
  *  @brief Routines to for a FIFO buffer.
  *
  *  This contains the functionality for a byte-wide FIFO.
  *
- *  @author Uldis Bagley and Prashant Shreshtha
+ *  @author Uldis Bagley and Prashant Shrestha
  *  @date 2020-03-18
  */
 
