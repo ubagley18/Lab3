@@ -30,6 +30,7 @@
 #include "Packet\packet.h"
 
 #include "Flash\Flash.h"
+#include "LEDs\LEDs.h"
 
 
 // Commands
@@ -149,7 +150,7 @@ static bool MCUInit(void)
 	// SystemCoreClock from system_MK64F12.c
 	if(Packet_Init(SystemCoreClock, BAUD_RATE) && Flash_Init())
 	{
-		LED_Init();
+		LEDs_Init();
 	}
 
 	Mcu_Nb.l = 1291; // Init student number to fill union

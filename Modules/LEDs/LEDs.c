@@ -38,9 +38,15 @@ const gpio_pin_config_t LED_GPIO_CONFIG =
 bool LEDs_Init(void)
 {
 	CLOCK_EnableClock(kCLOCK_PortE);
+	CLOCK_EnableClock(kCLOCK_PortB);
 
-	PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG);// page 246 of datasheet
+	PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG);
+	PORT_SetPinConfig(PORTB,21, &LED_PORT_PIN_CONFIG);
+	PORT_SetPinConfig(PORTB,22, &LED_PORT_PIN_CONFIG);
+
 	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
+	//GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG);
+	//GPIO_PinInit(GPIOB, 22, &LED_GPIO_CONFIG);
 
 	return true;
 }
@@ -52,7 +58,8 @@ bool LEDs_Init(void)
  */
 void LEDs_On(const LED_t color)
 {
-	GPIO_PortClear(GPIOE,0x4000000); // setting port 26 to 0
+	//GPIO_PortClear(GPIOE,0x4000000); // setting port 26 to 0
+	GPIO_PortClear(GPIOE,color);
 }
 
 /*! @brief Turns off an LED.
@@ -62,7 +69,8 @@ void LEDs_On(const LED_t color)
  */
 void LEDs_Off(const LED_t color)
 {
-	GPIO_PortSet(GPIOE,0x4000000); // setting port 26 to 1
+	//GPIO_PortSet(GPIOE,0x4000000); // setting port 26 to 1
+	GPIO_PortSet(GPIOE,color);
 }
 
 /*! @brief Toggles an LED.
@@ -72,5 +80,6 @@ void LEDs_Off(const LED_t color)
  */
 void LEDs_Toggle(const LED_t color)
 {
-	GPIO_PortToggle(GPIOE,0x4000000);
+	//GPIO_PortToggle(GPIOE,0x4000000);
+	GPIO_PortToggle(GPIOE,color);
 }
