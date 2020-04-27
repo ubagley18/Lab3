@@ -7,9 +7,33 @@
  *  @author Uldis Bagley and Prashant Shrestha
  *  @date 2020-02-11
  */
+#include "fsl_gpio.h"
+#include "fsl_port.h"
 
 // new types
 #include "LEDs.h"
+
+
+//void GPIO_PinInit(GPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config);
+//void PORT_SetPinConfig(PORT_Type *base, uint32_t pin, const port_pin_config_t *config);
+
+const port_pin_config_t LED_PORT_PIN_CONFIG =
+{
+		.pullSelect = kPORT_PullDisable,
+		.slewRate = kPORT_SlowSlewRate,
+		.passiveFilterEnable = kPORT_PassiveFilterDisable,
+		.openDrainEnable = kPORT_OpenDrainDisable,
+		.driveStrength = kPORT_LowDriveStrength,
+		.mux = kPORT_MuxAsGpio, //for pin multiplexing see page 248
+		.lockRegister = kPORT_UnlockRegister
+};
+
+const gpio_pin_config_t LED_GPIO_CONFIG =
+{
+		kGPIO_DigitalOutput,
+		0,
+};
+
 
 /*! @brief Sets up the LEDs before first use.
  *
@@ -17,7 +41,14 @@
  */
 bool LEDs_Init(void)
 {
+	CLOCK_EnableClock(kCLOCK_PortE);
 
+
+	PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG);// page 246 of datasheet
+	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
+
+
+	return true;
 }
 
 /*! @brief Turns an LED on.
@@ -27,7 +58,7 @@ bool LEDs_Init(void)
  */
 void LEDs_On(const LED_t color)
 {
-
+	GPIO_PortClear(GPIOE,0x4000000); // setting port 26 to 0
 }
 
 /*! @brief Turns off an LED.
@@ -37,7 +68,7 @@ void LEDs_On(const LED_t color)
  */
 void LEDs_Off(const LED_t color)
 {
-
+	GPIO_PortSet(GPIOE,0x4000000); // setting port 26 to 1
 }
 
 /*! @brief Toggles an LED.
@@ -47,5 +78,5 @@ void LEDs_Off(const LED_t color)
  */
 void LEDs_Toggle(const LED_t color)
 {
-
+	GPIO_PortToggle(GPIOE,0x4000000);
 }

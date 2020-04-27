@@ -1,4 +1,4 @@
-/*14444444444444444444444444444444444444444444444444! @file
+/*! @file
  0*
  *  @brief I/O routines for UART communications on the TWR-K70F120M.
  *
