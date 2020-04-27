@@ -30,7 +30,6 @@
 #include "Packet\packet.h"
 
 #include "Flash\Flash.h"
-#include "LEDs\LEDs.h"
 
 
 // Commands
@@ -102,13 +101,7 @@ static bool HandleVersionPacket(void);
 static bool HandleNumberPacket(void);
 
 
-/*! @brief Respond to packets sent from the PC.
- *
- *  @note Assumes that MCUInit has been called successfully.
- */
-static void HandlePackets(void);
-
-/*
+/*! @brief Respond to a MCU Mode packet sent from the PC.
  *
  *  @return bool - TRUE if the packet was handled successfully.
  */
@@ -128,6 +121,12 @@ static bool HandleFlashProgram(void);
  */
 static bool HandleFlashRead();
 
+
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
 
 
 
@@ -150,7 +149,7 @@ static bool MCUInit(void)
 	// SystemCoreClock from system_MK64F12.c
 	if(Packet_Init(SystemCoreClock, BAUD_RATE) && Flash_Init())
 	{
-		LEDs_Init();
+		LED_Init();
 	}
 
 	Mcu_Nb.l = 1291; // Init student number to fill union
@@ -242,21 +241,6 @@ static bool HandleFlashRead()
 	return false;
 }
 
-
-static bool HandleFlashProgram(void)
-{
-	if ((Packet_Parameter1 >= 0) && (Packet_Parameter1 <= 7) && (Packet_Parameter2 == 0))
-	{
-		//return flash write
-	}
-
-	else if ((Packet_Parameter1 >=8) && (Packet_Parameter2 == 0))
-	{
-		//return erase sector
-	}
-
-	return false;
-}
 /*! @brief Respond to packets sent from the PC.
  *
  *  @note Assumes that MCUInit has been called successfully.
