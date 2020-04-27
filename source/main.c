@@ -110,18 +110,18 @@ static bool HandleNumberPacket(void);
 static bool HandleModePacket(void);
 
 
-/*! @brief
+/*! @brief Programs a byte into Flash
  *
- *  @return bool -
+ *  @return bool - TRUE if byte written successfully
  */
 static bool HandleFlashProgram(void);
 
 
-/*! @brief
+/*! @brief Reads data from Flash
  *
- *  @return bool -
+ *  @return bool - TRUE if data read successfully
  */
-static bool HandleFlashRead();
+static bool HandleFlashRead(void);
 
 
 /*! @brief Respond to packets sent from the PC.
@@ -232,7 +232,7 @@ static bool HandleFlashProgram(void)
 		return false;
 }
 
-static bool HandleFlashRead()
+static bool HandleFlashRead(void)
 {
 
 	if (Packet_Parameter1 >= 0 && Packet_Parameter1 <= 7 && Packet_Parameter2 == 0)
