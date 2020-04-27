@@ -103,13 +103,7 @@ static bool HandleVersionPacket(void);
 static bool HandleNumberPacket(void);
 
 
-/*! @brief Respond to packets sent from the PC.
- *
- *  @note Assumes that MCUInit has been called successfully.
- */
-static void HandlePackets(void);
-
-/*
+/*! @brief Respond to a MCU Mode packet sent from the PC.
  *
  *  @return bool - TRUE if the packet was handled successfully.
  */
@@ -129,6 +123,12 @@ static bool HandleFlashProgram(void);
  */
 static bool HandleFlashRead();
 
+
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
 
 
 
@@ -244,8 +244,7 @@ static bool HandleFlashRead()
 }
 
 
-
-/*! @brief Respond to packets sent from the PC.
+/* @brief Respond to packets sent from the PC.
  *
  *  @note Assumes that MCUInit has been called successfully.
  */
