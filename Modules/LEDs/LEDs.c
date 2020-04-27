@@ -5,17 +5,13 @@
  *  This contains the functions for operating the LEDs.
  *
  *  @author Uldis Bagley and Prashant Shrestha
- *  @date 2020-02-11
+ *  @date 2020-04-27
  */
 #include "fsl_gpio.h"
 #include "fsl_port.h"
 
 // new types
 #include "LEDs.h"
-
-
-//void GPIO_PinInit(GPIO_Type *base, uint32_t pin, const gpio_pin_config_t *config);
-//void PORT_SetPinConfig(PORT_Type *base, uint32_t pin, const port_pin_config_t *config);
 
 const port_pin_config_t LED_PORT_PIN_CONFIG =
 {
@@ -43,10 +39,8 @@ bool LEDs_Init(void)
 {
 	CLOCK_EnableClock(kCLOCK_PortE);
 
-
 	PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG);// page 246 of datasheet
 	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
-
 
 	return true;
 }

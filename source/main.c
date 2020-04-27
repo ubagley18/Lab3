@@ -54,7 +54,7 @@ const uint32_t BAUD_RATE = 115200;
 TPacket Packet;
 
 
-//Private global variables
+// Private global variables
 static uint16union_t Mcu_Nb; // MCU number
 static uint16union_t Mcu_Md; // MCU Mode
 
@@ -62,7 +62,7 @@ volatile uint16union_t *NvMCUNb;	// The non-volatile MCU number
 volatile uint16union_t *NvMCUMd;	// The non-volatile MCU mode
 
 
-//Function Prototypes
+// Function Prototypes
 
 /*! @brief Sends startup packets to the PC.
  *
@@ -101,48 +101,25 @@ static bool HandleVersionPacket(void);
 static bool HandleNumberPacket(void);
 
 
-/*! @brief Respond to packets sent from the PC.
+/*! @brief Respond to a MCU Mode packet sent from the PC.
  *
- *  @note Assumes that MCUInit has been called successfully.
+ *  @return bool - TRUE if the packet was handled successfully.
  */
-static void HandlePackets(void);
+static bool HandleModePacket(void);
+
+
+/*! @brief
+ *
+ *  @return bool -
+ */
 static bool HandleFlashProgram(void);
 
-/*! @brief Sends startup packets to the PC.
+
+/*! @brief
  *
- *  @return bool - TRUE if sending the startup packets was successful.
- *  @note Assumes that MCUInit has been called successfully.
+ *  @return bool -
  */
-static bool SendStartupPackets(void);
-
-
-/*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
- *
- *  @return bool - TRUE if sending the startup packets was successful.
- */
-static bool MCUInit(void);
-
-
-/*! @brief Respond to a Startup packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- *  @note Assumes that MCUInit has been called successfully.
- */
-static bool HandleStartupPacket(void);
-
-
-/*! @brief Respond to a Version packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- */
-static bool HandleVersionPacket(void);
-
-
-/*! @brief Respond to a MCU Number packet sent from the PC.
- *
- *  @return bool - TRUE if the packet was handled successfully.
- */
-static bool HandleNumberPacket(void);
+static bool HandleFlashRead();
 
 
 /*! @brief Respond to packets sent from the PC.
@@ -150,104 +127,91 @@ static bool HandleNumberPacket(void);
  *  @note Assumes that MCUInit has been called successfully.
  */
 static void HandlePackets(void);
+
 
 
 static bool SendStartupPackets(void)
 {
- Packet_Put(STARTUP_CMD, 0, 0, 0);
- Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
- Packet_Put(NUMBER_CMD, 1, NvMCUNb->s.Lo, NvMCUNb->s.Hi);
- Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
- return true;
+	Packet_Put(STARTUP_CMD, 0, 0, 0);
+	Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
+	Packet_Put(NUMBER_CMD, 1, NvMCUNb->s.Lo, NvMCUNb->s.Hi);
+	Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
+
+	return true;
 }
 
 
 static bool MCUInit(void)
 {
-  BOARD_InitPins();
-  BOARD_InitBootClocks();
+	BOARD_InitPins();
+	BOARD_InitBootClocks();
 
-  Packet_Init(SystemCoreClock, BAUD_RATE);// SystemCoreClock from system_MK64F12.c
-  Mcu_Nb.l = 1291; // Init student number to fill union
-  Mcu_Md.l = 1234; // Init Mode
+	// SystemCoreClock from system_MK64F12.c
+	if(Packet_Init(SystemCoreClock, BAUD_RATE) && Flash_Init())
+	{
+		LED_Init();
+	}
 
+	Mcu_Nb.l = 1291; // Init student number to fill union
+	Mcu_Md.l = 1234; // Init MCUMode
 
-  return true;
+	return true;
 }
 
 
 static bool HandleStartupPacket(void)
 {
-  if ((Packet_Parameter1 == 0) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
-  {
-    SendStartupPackets();
-	return true;
-  }
-  else
-  	return false;
+	if ((Packet_Parameter1 == 0) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
+	{
+		SendStartupPackets();
+		return true;
+	}
+	else
+		return false;
 }
 
 
 static bool HandleVersionPacket(void)
 {
-  if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
-    return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
-  else
-  	return false;
+	if ((Packet_Parameter1 == 'v') && (Packet_Parameter2 == 'x') && (Packet_Parameter3 == 13))
+		return Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
+	else
+		return false;
 }
 
 
 static bool HandleNumberPacket(void)
 {
- // uint16union_t new_Mcu_Nb;
- // new_Mcu_Nb.s.Lo = Packet_Parameter2;
-  //new_Mcu_Nb.s.Hi = Packet_Parameter3;
+	if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
+		return Packet_Put(NUMBER_CMD, 1, NvMCUNb->s.Lo, NvMCUNb->s.Hi);
 
-  if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
-    return Packet_Put(NUMBER_CMD, 1, NvMCUNb->s.Lo, NvMCUNb->s.Hi);
+	else if ((Packet_Parameter1 == 2))
+	{
+    	//doing it the way Peter suggests in the lab2 manual
+		Flash_Write16((uint16_t *)&NvMCUNb->l, Packet_Parameter23);
+		Packet_Put(NUMBER_CMD, 2, Packet_Parameter2, Packet_Parameter3);
 
-  else if ((Packet_Parameter1 == 2)) //&& (Packet_Parameter2 == new_Mcu_Nb.s.Lo) && (Packet_Parameter3 == new_Mcu_Nb.s.Hi))
-  {
-    // Replace old Nb with new Nb
-	//Mcu_Nb.s.Lo = new_Mcu_Nb.s.Lo;
-	//Mcu_Nb.s.Hi = new_Mcu_Nb.s.Hi;
-
-	//doing it the way Peter suggests in the lab2 manual
-	Flash_Write16((uint16_t *)&NvMCUNb->l, Packet_Parameter23);
-	Packet_Put(NUMBER_CMD, 2, Packet_Parameter2, Packet_Parameter3);
-
-	return true;
-
-  }
-  else
-  	return false;
+		return true;
+	}
+	else
+		return false;
 }
 
 static bool HandleModePacket(void)
 {
-//	 uint16union_t new_Mcu_Md;
-//	  new_Mcu_Md.s.Lo = Packet_Parameter2;
-//	  new_Mcu_Md.s.Hi = Packet_Parameter3;
+	if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
+		return  Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
 
-	  if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
-	    return  Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
-
-	  else if ((Packet_Parameter1 == 2))// && (Packet_Parameter2 == new_Mcu_Md.s.Lo) && (Packet_Parameter3 == new_Mcu_Md.s.Hi))
-	  {
-//	    // Replace old Nb with new Nb
-//		Mcu_Md.s.Lo = new_Mcu_Md.s.Lo;
-//		Mcu_Md.s.Hi = new_Mcu_Md.s.Hi;
-//
-//		Flash_Write16((uint16_t*)&Mcu_Md, Mcu_Md.l);
-//		Packet_Put(NUMBER_CMD, 2, Mcu_Md.s.Lo, Mcu_Md.s.Hi);
-
+	else if ((Packet_Parameter1 == 2))
+	{
 		Flash_Write16((uint16_t *)&NvMCUMd->l, Packet_Parameter23);
 		Packet_Put(NUMBER_CMD, 2, Packet_Parameter2, Packet_Parameter3);
 
 		return true;
-	  }
-	  else
-	  	return false;
+	}
+
+	else
+		return false;
 }
 
 
@@ -283,51 +247,50 @@ static bool HandleFlashRead()
  */
 static void HandlePackets(void)
 {
-  bool success;
-  uint8_t command = Packet_Command; // Store the value of Packet_Command so ACK may be manipulated
+	bool success;
+	uint8_t command = Packet_Command; // Store the value of Packet_Command so ACK may be manipulated
 
-  // If the command has an ACK request, remove it for the switch statement
-  if ((Packet_Command & PACKET_CMD_ACK) == PACKET_CMD_ACK)
-    Packet_Command &= ~PACKET_CMD_ACK;
+	// If the command has an ACK request, remove it for the switch statement
+	if ((Packet_Command & PACKET_CMD_ACK) == PACKET_CMD_ACK)
+		Packet_Command &= ~PACKET_CMD_ACK;
 
-  // Handle packets
-  switch (Packet_Command)
-  {
-    case STARTUP_CMD:
-	  success = HandleStartupPacket();
-	  break;
+	// Handle packets
+	switch (Packet_Command)
+	{
+		case STARTUP_CMD:
+			success = HandleStartupPacket();
+			break;
 
-	case VERSION_CMD:
-	  success = HandleVersionPacket();
-	  break;
+		case VERSION_CMD:
+			success = HandleVersionPacket();
+			break;
 
-	case NUMBER_CMD:
-	  success = HandleNumberPacket();
-	  break;
+		case NUMBER_CMD:
+			success = HandleNumberPacket();
+			break;
 
-	case MODE_CMD:
-		  success = HandleModePacket();
-		  break;
+		case MODE_CMD:
+			success = HandleModePacket();
+			break;
 
-	case FLASH_PROGRAM_CMD:
-		success = HandleFlashProgram();
-		break;
+		case FLASH_PROGRAM_CMD:
+			success = HandleFlashProgram();
+			break;
 
-	case FLASH_READ_CMD:
-		success = HandleFlashRead();
-		break;
+		case FLASH_READ_CMD:
+			success = HandleFlashRead();
+			break;
 
-	default:
-	  return;
+		default:
+			return;
   }
-
-  //If success returns true then the packet has been handled successfully - we return with an ACK if it was requested
-  if ((success) && ((command & PACKET_CMD_ACK) == PACKET_CMD_ACK))
-  {
-    Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
-  }
-  else
-  	return;
+	//If success returns true then the packet has been handled successfully - we return with an ACK if it was requested
+	if ((success) && ((command & PACKET_CMD_ACK) == PACKET_CMD_ACK))
+	{
+		Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+	}
+	else
+		return;
 }
 
 /*!
@@ -335,41 +298,38 @@ static void HandlePackets(void)
  */
 int main(void)
 {
-  MCUInit();
+	MCUInit();
+	bool success;
 
-  bool success;
+	//not including (volatile void **) gives us a warning
+	success = Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb));
 
-  /*
-   * not including (volatile void **) gives us a warning
-   * */
-  success = Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb));
+	if(success)
+	{
+		if(NvMCUNb->l == 0xFFFF) // ensuring Flash is erased
+		{
+			Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
+		}
+	}
 
-  if(success)
-  {
-	  if(NvMCUNb->l == 0xFFFF) // ensuring Flash is erased
-	  {
-		  Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
-	  }
-  }
+	success = Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd));
 
-  success = Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd));
-
-  if(success)
-   {
- 	  if(NvMCUMd->l == 0xFFFF) // ensuring Flash is erased
- 	  {
- 		  Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
- 	  }
+	if(success)
+	{
+		if(NvMCUMd->l == 0xFFFF) // ensuring Flash is erased
+		{
+			Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
+		}
    }
 
 
-  for (;;)
-  {
-    UART_Poll();
+	for (;;)
+	{
+		UART_Poll();
 
-    if (Packet_Get())
-      HandlePackets();
-  }
+		if (Packet_Get())
+			HandlePackets();
+	}
 }
 
 /* END main */
