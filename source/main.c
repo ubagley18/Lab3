@@ -102,7 +102,13 @@ static bool HandleVersionPacket(void);
 static bool HandleNumberPacket(void);
 
 
-/*! @brief Respond to a MCU Mode packet sent from the PC.
+/*! @brief Respond to packets sent from the PC.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+static void HandlePackets(void);
+
+/*
  *
  *  @return bool - TRUE if the packet was handled successfully.
  */
@@ -122,12 +128,6 @@ static bool HandleFlashProgram(void);
  */
 static bool HandleFlashRead();
 
-
-/*! @brief Respond to packets sent from the PC.
- *
- *  @note Assumes that MCUInit has been called successfully.
- */
-static void HandlePackets(void);
 
 
 
@@ -242,6 +242,21 @@ static bool HandleFlashRead()
 	return false;
 }
 
+
+static bool HandleFlashProgram(void)
+{
+	if ((Packet_Parameter1 >= 0) && (Packet_Parameter1 <= 7) && (Packet_Parameter2 == 0))
+	{
+		//return flash write
+	}
+
+	else if ((Packet_Parameter1 >=8) && (Packet_Parameter2 == 0))
+	{
+		//return erase sector
+	}
+
+	return false;
+}
 /*! @brief Respond to packets sent from the PC.
  *
  *  @note Assumes that MCUInit has been called successfully.
