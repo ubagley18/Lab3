@@ -30,6 +30,7 @@
 #include "Packet\packet.h"
 
 #include "Flash\Flash.h"
+
 #include "LEDs\LEDs.h"
 
 
@@ -109,16 +110,16 @@ static bool HandleNumberPacket(void);
 static bool HandleModePacket(void);
 
 
-/*! @brief Respond to a MCU program byte
+/*! @brief
  *
- *  @return bool - TRUE if the packet was handled successfully
+ *  @return bool -
  */
 static bool HandleFlashProgram(void);
 
 
-/*! @brief Respond to a MCU read byte
+/*! @brief
  *
- *  @return bool - TRUE if the packet was handled successfully
+ *  @return bool -
  */
 static bool HandleFlashRead();
 
@@ -155,8 +156,6 @@ static bool MCUInit(void)
 
 	Mcu_Nb.l = 1291; // Init student number to fill union
 	Mcu_Md.l = 1234; // Init MCUMode
-
-
 
 	return true;
 }
@@ -225,18 +224,18 @@ static bool HandleFlashProgram(void)
 		return Flash_Write8((uint8_t*)(FLASH_DATA_START + Packet_Parameter1), Packet_Parameter3);
 	}
 
-	else if ((Packet_Parameter1 >=8) && (Packet_Parameter2 == 0))
+	else if ((Packet_Parameter1 == 8) && (Packet_Parameter2 == 0))
 	{
 		return Flash_Erase();
 	}
-
-	return false;
+	else
+		return false;
 }
 
 static bool HandleFlashRead()
 {
 
-	if(Packet_Parameter1 >= 0 && Packet_Parameter1 <= 7 && Packet_Parameter2 == 0)
+	if (Packet_Parameter1 >= 0 && Packet_Parameter1 <= 7 && Packet_Parameter2 == 0)
 	{
 		return Packet_Put(FLASH_READ_CMD,Packet_Parameter1,0,_FB(FLASH_DATA_START + Packet_Parameter1));
 	}
@@ -244,7 +243,8 @@ static bool HandleFlashRead()
 	return false;
 }
 
-/*! @brief Respond to packets sent from the PC.
+
+/* @brief Respond to packets sent from the PC.
  *
  *  @note Assumes that MCUInit has been called successfully.
  */
@@ -302,29 +302,17 @@ static void HandlePackets(void)
 int main(void)
 {
 	MCUInit();
-
 	bool success;
 
-			//not including (volatile void **) gives us a warning
-			success = Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb));
+	success = Flash_AllocateVar((volatile void**)&NvMCUNb, sizeof(*NvMCUNb));
 
-			if(success)
-			{
-				if(NvMCUNb->l == 0xFFFF) // ensuring Flash is erased
-				{
-					Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
-				}
-			}
+	if (success && (NvMCUNb->l == 0xFFFF))
+		Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
 
-			success = Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd));
+	success = Flash_AllocateVar((volatile void**)&NvMCUMd, sizeof(*NvMCUMd));
 
-			if(success)
-			{
-				if(NvMCUMd->l == 0xFFFF) // ensuring Flash is erased
-				{
-					Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
-				}
-			}
+	if (success && (NvMCUNb->l == 0xFFFF))
+		Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
 
 	for (;;)
 	{
@@ -335,7 +323,3 @@ int main(void)
 	}
 }
 
-/* END main */
-/*!
-** @}
-*/
