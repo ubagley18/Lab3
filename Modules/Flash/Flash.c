@@ -19,6 +19,9 @@
 #define HALF_WORD 2
 #define WORD 4
 
+static uint8_t FlashMemory = 0xFF;
+
+
 typedef struct
 {
   uint8_t command;
@@ -96,38 +99,102 @@ static bool ModifyPhrase(const uint32_t address, const uint64union_t phrase)
  */
 bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
 {
-	// Allocate variable to space in flash memory for the pointer address
-	uint32_t* possibleAddress; // possible address to allocate variable
-	uint32_t access;
 
+	static bool FlashSectorsAllocated[8] = { false };
+	uint32_t addressForVariable;
 
-	switch (size)
+	if (size == 1 || size == 2 || size == 4) // check to see that only accepted data is inputted
 	{
-		case BYTE:
-			access = _FB(possibleAddress);
-			break;
-		case HALF_WORD:
-			access = _FH(possibleAddress);
-			break;
-		case WORD:
-			access = _FW(possibleAddress);
-			break;
-	}
-
-	for (*possibleAddress = FLASH_DATA_START; *possibleAddress < (FLASH_DATA_END + 1); *possibleAddress+= size)
-	{
-		// Check if location of 'i' is empty
-		if (access == 0) // if place is empty we fill with our value
+		for (int i = 0; i < 8; i += size)
 		{
-			*variable = (void *)access; // allocate address for data to reside
-			return true;
+			if (FlashSectorsAllocated[i] == 0x00) //check to see if the sector is available
+			{
+				addressForVariable = FLASH_DATA_START + i; // calculate the address that will be assigned
+				for (int x = 0; x < size; x++)
+				{
+					FlashSectorsAllocated[i] = 0x01; // block out the rest of the sectors that are no longer usable
+				}
+				*variable = (void*)addressForVariable; //assign the pointer variable to the allocated flash address
+				return true;
+			}
 		}
-		else if (access != 0) // if allocation is full we increment
-			continue;
-		else // if all places are full we return false
-			return false;
+	}
+	else
+	{
+		return false;
 	}
 	return true;
+
+//	  static uint8_t memoryAlloc; //memory mask to allocate memory position
+//	  static int variableAddress; //temporary variable address
+//
+//
+//	  //check the size of the variable
+//	  switch (size)
+//	  {
+//	    //assign potential memory depending on the size
+//	    case 1:
+//	      memoryAlloc = 0x01; // 0000 0001
+//	      break;
+//	    case 2:
+//	      memoryAlloc = 0x03; // 0000 0011
+//	      break;
+//	    case 4:
+//	      memoryAlloc = 0x0F; // 0000 1111
+//	      break;
+//	  }
+//
+//
+//	  //loop through the address incrementing by variable size to find an unused memory
+//	  for (variableAddress = FLASH_DATA_START; variableAddress <= FLASH_DATA_END; variableAddress += size)
+//	  {
+//	    //check if the flash is empty
+//	    if (memoryAlloc == (FlashMemory & memoryAlloc))
+//	    {
+//	      //write the selected address to the address of the memory
+//	      *variable = (void *) variableAddress;
+//	      //change the current memory as used
+//	      FlashMemory = (FlashMemory ^ memoryAlloc);
+//	      return true;
+//	    }
+//	    //shift down the memoryAlloc until Flash Memory is empty
+//	    memoryAlloc = memoryAlloc << size;
+//	  }
+//	  return false;
+
+
+//	// Allocate variable to space in flash memory for the pointer address
+//	uint32_t* possibleAddress; // possible address to allocate variable
+//	uint32_t access;
+//
+//
+//	switch (size)
+//	{
+//		case BYTE:
+//			access = _FB(possibleAddress);
+//			break;
+//		case HALF_WORD:
+//			access = _FH(possibleAddress);
+//			break;
+//		case WORD:
+//			access = _FW(possibleAddress);
+//			break;
+//	}
+//
+//	for (*possibleAddress = FLASH_DATA_START; *possibleAddress < (FLASH_DATA_END + 1); *possibleAddress+= size)
+//	{
+//		// Check if location of 'i' is empty
+//		if (access == 0) // if place is empty we fill with our value
+//		{
+//			*variable = (void *)access; // allocate address for data to reside
+//			return true;
+//		}
+//		else if (access != 0) // if allocation is full we increment
+//			continue;
+//		else // if all places are full we return false
+//			return false;
+//	}
+//	return true;
 }
 
 
@@ -138,14 +205,14 @@ static bool LaunchCommand(FCCOB_t* commonCommandObject)
   FTFE->FCCOB1 = commonCommandObject->address.separate.flashAddress2;
   FTFE->FCCOB2 = commonCommandObject->address.separate.flashAddress1;
   FTFE->FCCOB3 = commonCommandObject->address.separate.flashAddress0;
-  FTFE->FCCOB4 = commonCommandObject->data.separate.dataByte7;
-  FTFE->FCCOB5 = commonCommandObject->data.separate.dataByte6;
-  FTFE->FCCOB6 = commonCommandObject->data.separate.dataByte5;
-  FTFE->FCCOB7 = commonCommandObject->data.separate.dataByte4;
-  FTFE->FCCOB8 = commonCommandObject->data.separate.dataByte3;
-  FTFE->FCCOB9 = commonCommandObject->data.separate.dataByte2;
-  FTFE->FCCOBA = commonCommandObject->data.separate.dataByte1;
-  FTFE->FCCOBB = commonCommandObject->data.separate.dataByte0;
+  FTFE->FCCOB8 = commonCommandObject->data.separate.dataByte7;
+  FTFE->FCCOB9 = commonCommandObject->data.separate.dataByte6;
+  FTFE->FCCOBA = commonCommandObject->data.separate.dataByte5;
+  FTFE->FCCOBB = commonCommandObject->data.separate.dataByte4;
+  FTFE->FCCOB4 = commonCommandObject->data.separate.dataByte3;
+  FTFE->FCCOB5 = commonCommandObject->data.separate.dataByte2;
+  FTFE->FCCOB6 = commonCommandObject->data.separate.dataByte1;
+  FTFE->FCCOB7 = commonCommandObject->data.separate.dataByte0;
 
 	FTFE->FSTAT = FTFE_FSTAT_CCIF_MASK; // clear the CCIF to launch the command
 	// WHAT DOES THE DIAGRAM ON P702 MEAN BY MORE PARAMETERS?

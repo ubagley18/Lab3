@@ -30,6 +30,7 @@
 #include "Packet\packet.h"
 
 #include "Flash\Flash.h"
+#include "LEDs\LEDs.h"
 
 
 // Commands
@@ -108,16 +109,16 @@ static bool HandleNumberPacket(void);
 static bool HandleModePacket(void);
 
 
-/*! @brief
+/*! @brief Respond to a MCU program byte
  *
- *  @return bool -
+ *  @return bool - TRUE if the packet was handled successfully
  */
 static bool HandleFlashProgram(void);
 
 
-/*! @brief
+/*! @brief Respond to a MCU read byte
  *
- *  @return bool -
+ *  @return bool - TRUE if the packet was handled successfully
  */
 static bool HandleFlashRead();
 
@@ -135,7 +136,7 @@ static bool SendStartupPackets(void)
 	Packet_Put(STARTUP_CMD, 0, 0, 0);
 	Packet_Put(VERSION_CMD, 'v', VERSION_MAJOR, VERSION_MINOR);
 	Packet_Put(NUMBER_CMD, 1, NvMCUNb->s.Lo, NvMCUNb->s.Hi);
-	Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
+	Packet_Put(MODE_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
 
 	return true;
 }
@@ -149,11 +150,13 @@ static bool MCUInit(void)
 	// SystemCoreClock from system_MK64F12.c
 	if(Packet_Init(SystemCoreClock, BAUD_RATE) && Flash_Init())
 	{
-		LED_Init();
+		LEDs_Init();
 	}
 
 	Mcu_Nb.l = 1291; // Init student number to fill union
 	Mcu_Md.l = 1234; // Init MCUMode
+
+
 
 	return true;
 }
@@ -299,29 +302,29 @@ static void HandlePackets(void)
 int main(void)
 {
 	MCUInit();
+
 	bool success;
 
-	//not including (volatile void **) gives us a warning
-	success = Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb));
+			//not including (volatile void **) gives us a warning
+			success = Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb));
 
-	if(success)
-	{
-		if(NvMCUNb->l == 0xFFFF) // ensuring Flash is erased
-		{
-			Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
-		}
-	}
+			if(success)
+			{
+				if(NvMCUNb->l == 0xFFFF) // ensuring Flash is erased
+				{
+					Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
+				}
+			}
 
-	success = Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd));
+			success = Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd));
 
-	if(success)
-	{
-		if(NvMCUMd->l == 0xFFFF) // ensuring Flash is erased
-		{
-			Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
-		}
-   }
-
+			if(success)
+			{
+				if(NvMCUMd->l == 0xFFFF) // ensuring Flash is erased
+				{
+					Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
+				}
+			}
 
 	for (;;)
 	{

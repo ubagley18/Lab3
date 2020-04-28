@@ -81,6 +81,8 @@ Macros</h2></td></tr>
 <tr class="separator:ga200b35aa66e50dfd9dd220fdb36b1a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ad04bec5b1161abf8d925f14f1cf36d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga3ad04bec5b1161abf8d925f14f1cf36d">NUMBER_CMD</a>&#160;&#160;&#160;0x0B</td></tr>
 <tr class="separator:ga3ad04bec5b1161abf8d925f14f1cf36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3744f53ce2b913c0fd73b6298db0693e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga3744f53ce2b913c0fd73b6298db0693e">MODE_CMD</a>&#160;&#160;&#160;0x0D</td></tr>
+<tr class="separator:ga3744f53ce2b913c0fd73b6298db0693e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab55a4088e44f9fd730af2745a755edca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gab55a4088e44f9fd730af2745a755edca">FLASH_PROGRAM_CMD</a>&#160;&#160;&#160;0x07</td></tr>
 <tr class="separator:gab55a4088e44f9fd730af2745a755edca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2791b65973f8d17727c9389922d5ee5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga2791b65973f8d17727c9389922d5ee5c">FLASH_READ_CMD</a>&#160;&#160;&#160;0x08</td></tr>
@@ -88,6 +90,33 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gaa5092307bb5f36161fd4239f21ae8eed"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gaa5092307bb5f36161fd4239f21ae8eed">SendStartupPackets</a> (void)</td></tr>
+<tr class="memdesc:gaa5092307bb5f36161fd4239f21ae8eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends startup packets to the PC.  <a href="group__main__module.html#gaa5092307bb5f36161fd4239f21ae8eed">More...</a><br /></td></tr>
+<tr class="separator:gaa5092307bb5f36161fd4239f21ae8eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga05d6cff2c4cf03e26c5c05f4038f9dca"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga05d6cff2c4cf03e26c5c05f4038f9dca">MCUInit</a> (void)</td></tr>
+<tr class="memdesc:ga05d6cff2c4cf03e26c5c05f4038f9dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the MCU by initializing all variables and then sending startup packets to the PC.  <a href="group__main__module.html#ga05d6cff2c4cf03e26c5c05f4038f9dca">More...</a><br /></td></tr>
+<tr class="separator:ga05d6cff2c4cf03e26c5c05f4038f9dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga955bec09a746ef3069f87646261721c6"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga955bec09a746ef3069f87646261721c6">HandleStartupPacket</a> (void)</td></tr>
+<tr class="memdesc:ga955bec09a746ef3069f87646261721c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a Startup packet sent from the PC.  <a href="group__main__module.html#ga955bec09a746ef3069f87646261721c6">More...</a><br /></td></tr>
+<tr class="separator:ga955bec09a746ef3069f87646261721c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac152ef17432ee51c659d53b4fb1d0efb"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gac152ef17432ee51c659d53b4fb1d0efb">HandleVersionPacket</a> (void)</td></tr>
+<tr class="memdesc:gac152ef17432ee51c659d53b4fb1d0efb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a Version packet sent from the PC.  <a href="group__main__module.html#gac152ef17432ee51c659d53b4fb1d0efb">More...</a><br /></td></tr>
+<tr class="separator:gac152ef17432ee51c659d53b4fb1d0efb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5b479e49202319ce711ea7265cd35817"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga5b479e49202319ce711ea7265cd35817">HandleNumberPacket</a> (void)</td></tr>
+<tr class="memdesc:ga5b479e49202319ce711ea7265cd35817"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a MCU Number packet sent from the PC.  <a href="group__main__module.html#ga5b479e49202319ce711ea7265cd35817">More...</a><br /></td></tr>
+<tr class="separator:ga5b479e49202319ce711ea7265cd35817"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6214b3b2b8f0040f8f5526dae62732b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gaf6214b3b2b8f0040f8f5526dae62732b">HandleModePacket</a> (void)</td></tr>
+<tr class="memdesc:gaf6214b3b2b8f0040f8f5526dae62732b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a MCU Mode packet sent from the PC.  <a href="group__main__module.html#gaf6214b3b2b8f0040f8f5526dae62732b">More...</a><br /></td></tr>
+<tr class="separator:gaf6214b3b2b8f0040f8f5526dae62732b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafac380800173ae24316efc2a1b60c4cb"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gafac380800173ae24316efc2a1b60c4cb">HandleFlashProgram</a> (void)</td></tr>
+<tr class="memdesc:gafac380800173ae24316efc2a1b60c4cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a MCU program byte.  <a href="group__main__module.html#gafac380800173ae24316efc2a1b60c4cb">More...</a><br /></td></tr>
+<tr class="separator:gafac380800173ae24316efc2a1b60c4cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4ea132ff6e97b70f8f5aad675b1b5c41"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga4ea132ff6e97b70f8f5aad675b1b5c41">HandleFlashRead</a> ()</td></tr>
+<tr class="memdesc:ga4ea132ff6e97b70f8f5aad675b1b5c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to a MCU read byte.  <a href="group__main__module.html#ga4ea132ff6e97b70f8f5aad675b1b5c41">More...</a><br /></td></tr>
+<tr class="separator:ga4ea132ff6e97b70f8f5aad675b1b5c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0fdafa1dbb51cd815f0f99df7d1c2582"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga0fdafa1dbb51cd815f0f99df7d1c2582">HandlePackets</a> (void)</td></tr>
+<tr class="memdesc:ga0fdafa1dbb51cd815f0f99df7d1c2582"><td class="mdescLeft">&#160;</td><td class="mdescRight">Respond to packets sent from the PC.  <a href="group__main__module.html#ga0fdafa1dbb51cd815f0f99df7d1c2582">More...</a><br /></td></tr>
+<tr class="separator:ga0fdafa1dbb51cd815f0f99df7d1c2582"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga840291bc02cba5474a4cb46a9b9566fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga840291bc02cba5474a4cb46a9b9566fe">main</a> (void)</td></tr>
 <tr class="memdesc:ga840291bc02cba5474a4cb46a9b9566fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function.  <a href="group__main__module.html#ga840291bc02cba5474a4cb46a9b9566fe">More...</a><br /></td></tr>
 <tr class="separator:ga840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -98,10 +127,18 @@ Variables</h2></td></tr>
 <tr class="separator:ga7edbfc0fe7aa404aac3c2e864e0aa426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaca3ed257a4253f7c61940153626fbbe6"><td class="memItemLeft" align="right" valign="top">const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gaca3ed257a4253f7c61940153626fbbe6">VERSION_MINOR</a> = 0x00</td></tr>
 <tr class="separator:gaca3ed257a4253f7c61940153626fbbe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6c5b163eff2d95becdae0340dc255a44"><td class="memItemLeft" align="right" valign="top">const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga6c5b163eff2d95becdae0340dc255a44">BAUD_RATE</a> = 38400</td></tr>
-<tr class="separator:ga6c5b163eff2d95becdae0340dc255a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac74c1cf77ae5807a61baefd6df20201e"><td class="memItemLeft" align="right" valign="top">TPacket&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gac74c1cf77ae5807a61baefd6df20201e">Packet</a></td></tr>
+<tr class="memitem:gaad7e278a0fb6b9bd8306010a9354c06a"><td class="memItemLeft" align="right" valign="top">const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gaad7e278a0fb6b9bd8306010a9354c06a">BAUD_RATE</a> = 115200</td></tr>
+<tr class="separator:gaad7e278a0fb6b9bd8306010a9354c06a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac74c1cf77ae5807a61baefd6df20201e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="union_t_packet.html">TPacket</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gac74c1cf77ae5807a61baefd6df20201e">Packet</a></td></tr>
 <tr class="separator:gac74c1cf77ae5807a61baefd6df20201e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafd024f1a307b340475ebf576c64ed8eb"><td class="memItemLeft" align="right" valign="top">static uint16union_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gafd024f1a307b340475ebf576c64ed8eb">Mcu_Nb</a></td></tr>
+<tr class="separator:gafd024f1a307b340475ebf576c64ed8eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1df12e0040ba26e2a3f1abc143a0e8f8"><td class="memItemLeft" align="right" valign="top">static uint16union_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga1df12e0040ba26e2a3f1abc143a0e8f8">Mcu_Md</a></td></tr>
+<tr class="separator:ga1df12e0040ba26e2a3f1abc143a0e8f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9fd9349db0b1b73833535f023ada71c8"><td class="memItemLeft" align="right" valign="top">volatile uint16union_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#ga9fd9349db0b1b73833535f023ada71c8">NvMCUNb</a></td></tr>
+<tr class="separator:ga9fd9349db0b1b73833535f023ada71c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf0163d3720072520bc32b95bab37cb34"><td class="memItemLeft" align="right" valign="top">volatile uint16union_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__main__module.html#gaf0163d3720072520bc32b95bab37cb34">NvMCUMd</a></td></tr>
+<tr class="separator:gaf0163d3720072520bc32b95bab37cb34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -127,6 +164,20 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define FLASH_READ_CMD&#160;&#160;&#160;0x08</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga3744f53ce2b913c0fd73b6298db0693e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3744f53ce2b913c0fd73b6298db0693e">&#9670;&nbsp;</a></span>MODE_CMD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MODE_CMD&#160;&#160;&#160;0x0D</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -190,6 +241,209 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="gafac380800173ae24316efc2a1b60c4cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafac380800173ae24316efc2a1b60c4cb">&#9670;&nbsp;</a></span>HandleFlashProgram()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleFlashProgram </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a MCU program byte. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully </dd></dl>
+
+</div>
+</div>
+<a id="ga4ea132ff6e97b70f8f5aad675b1b5c41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4ea132ff6e97b70f8f5aad675b1b5c41">&#9670;&nbsp;</a></span>HandleFlashRead()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleFlashRead </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a MCU read byte. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully </dd></dl>
+
+</div>
+</div>
+<a id="gaf6214b3b2b8f0040f8f5526dae62732b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf6214b3b2b8f0040f8f5526dae62732b">&#9670;&nbsp;</a></span>HandleModePacket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleModePacket </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a MCU Mode packet sent from the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully. </dd></dl>
+
+</div>
+</div>
+<a id="ga5b479e49202319ce711ea7265cd35817"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5b479e49202319ce711ea7265cd35817">&#9670;&nbsp;</a></span>HandleNumberPacket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleNumberPacket </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a MCU Number packet sent from the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully. </dd></dl>
+
+</div>
+</div>
+<a id="ga0fdafa1dbb51cd815f0f99df7d1c2582"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0fdafa1dbb51cd815f0f99df7d1c2582">&#9670;&nbsp;</a></span>HandlePackets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void HandlePackets </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to packets sent from the PC. </p>
+<dl class="section note"><dt>Note</dt><dd>Assumes that MCUInit has been called successfully. </dd></dl>
+
+</div>
+</div>
+<a id="ga955bec09a746ef3069f87646261721c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga955bec09a746ef3069f87646261721c6">&#9670;&nbsp;</a></span>HandleStartupPacket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleStartupPacket </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a Startup packet sent from the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Assumes that MCUInit has been called successfully. </dd></dl>
+
+</div>
+</div>
+<a id="gac152ef17432ee51c659d53b4fb1d0efb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac152ef17432ee51c659d53b4fb1d0efb">&#9670;&nbsp;</a></span>HandleVersionPacket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool HandleVersionPacket </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Respond to a Version packet sent from the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if the packet was handled successfully. </dd></dl>
+
+</div>
+</div>
 <a id="ga840291bc02cba5474a4cb46a9b9566fe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga840291bc02cba5474a4cb46a9b9566fe">&#9670;&nbsp;</a></span>main()</h2>
 
@@ -210,15 +464,146 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ga05d6cff2c4cf03e26c5c05f4038f9dca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga05d6cff2c4cf03e26c5c05f4038f9dca">&#9670;&nbsp;</a></span>MCUInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool MCUInit </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the MCU by initializing all variables and then sending startup packets to the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if sending the startup packets was successful. </dd></dl>
+
+</div>
+</div>
+<a id="gaa5092307bb5f36161fd4239f21ae8eed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa5092307bb5f36161fd4239f21ae8eed">&#9670;&nbsp;</a></span>SendStartupPackets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool SendStartupPackets </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends startup packets to the PC. </p>
+<dl class="section return"><dt>Returns</dt><dd>bool - TRUE if sending the startup packets was successful. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Assumes that MCUInit has been called successfully. </dd></dl>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="ga6c5b163eff2d95becdae0340dc255a44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6c5b163eff2d95becdae0340dc255a44">&#9670;&nbsp;</a></span>BAUD_RATE</h2>
+<a id="gaad7e278a0fb6b9bd8306010a9354c06a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaad7e278a0fb6b9bd8306010a9354c06a">&#9670;&nbsp;</a></span>BAUD_RATE</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const uint16_t BAUD_RATE = 38400</td>
+          <td class="memname">const uint32_t BAUD_RATE = 115200</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga1df12e0040ba26e2a3f1abc143a0e8f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1df12e0040ba26e2a3f1abc143a0e8f8">&#9670;&nbsp;</a></span>Mcu_Md</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16union_t Mcu_Md</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="gafd024f1a307b340475ebf576c64ed8eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafd024f1a307b340475ebf576c64ed8eb">&#9670;&nbsp;</a></span>Mcu_Nb</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16union_t Mcu_Nb</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="gaf0163d3720072520bc32b95bab37cb34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf0163d3720072520bc32b95bab37cb34">&#9670;&nbsp;</a></span>NvMCUMd</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint16union_t* NvMCUMd</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga9fd9349db0b1b73833535f023ada71c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9fd9349db0b1b73833535f023ada71c8">&#9670;&nbsp;</a></span>NvMCUNb</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint16union_t* NvMCUNb</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -232,7 +617,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TPacket Packet</td>
+          <td class="memname"><a class="el" href="union_t_packet.html">TPacket</a> Packet</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -272,7 +657,7 @@ Variables</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Apr 27 2020 19:52:12 for Lab 2 by
+    <li class="footer">Generated on Mon Apr 27 2020 23:41:28 for Lab 2 by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>
