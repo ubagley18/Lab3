@@ -45,11 +45,14 @@ bool LEDs_Init(void)
 	PORT_SetPinConfig(PORTB,22, &LED_PORT_PIN_CONFIG);
 
 	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
-	//GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG);
-	//GPIO_PinInit(GPIOB, 22, &LED_GPIO_CONFIG);
+	GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG);
+	GPIO_PinInit(GPIOB, 22, &LED_GPIO_CONFIG);
 
 	return true;
 }
+
+//use array to const array inside that, store, port config  for each LED.
+//
 
 /*! @brief Turns an LED on.
  *
