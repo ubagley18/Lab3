@@ -14,7 +14,7 @@
 #include "PIT\PIT.h"
 
 
-static uint32_t GlobalPITModuleClk; 	// module clock.
+static uint32_t ModuleClk; 	// module clock.
 static void (*UserFunction)(void *); 	// user call back function.
 static void * UserArguments; 			// user call back function arguments.
 
@@ -32,7 +32,7 @@ static void * UserArguments; 			// user call back function arguments.
 bool PIT_Init(const uint32_t moduleClk, void (*userFunction)(void*), void* userArguments)
 {
 	// values of param global
-	GlobalPITModuleClk = moduleClk;
+	ModuleClk = moduleClk;
 	UserFunction = userFunction;
 	UserArguments = userArguments;
 
@@ -60,16 +60,15 @@ bool PIT_Init(const uint32_t moduleClk, void (*userFunction)(void*), void* userA
  */
 void PIT_Set(const uint32_t period, const bool restart)
 {
-	//LDVAL register trigger Calculation --> formula from pg.1117
+	// LDVAL register trigger Calculation --> formula from pg.1117
+	uint32_t triggerValue = ((ModuleClk * period)/1e9) - 1;
 
-	uint32_t triggerValue = ((GlobalPITModuleClk * period)/1e9) - 1;
-
-	PIT->CHANNEL[0].LDVAL = triggerValue;
+	PIT->CHANNEL[0].LDVAL = triggerValue; //as per page. 1117
 
 	if(restart)
 	{
-		PIT_Enable(false);
-		PIT_Enable(true);
+		PIT_Enable(false); // Disabled
+		PIT_Enable(true); // Enabled
 	}
 
 }
@@ -85,5 +84,15 @@ void PIT_Enable(const bool enable)
 	else
 		PIT->CHANNEL[0].TCTRL &= ~PIT_TCTRL_TEN_MASK; // timer disabled on channel 0 upon request
 
+}
+
+void PIT0_IRQHandler(void)
+{
+	//clear interrupt flags
+	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF_MASK;
+
+	//Call user function
+	if (UserFunction)
+		(*UserFunction)(UserArguments);
 }
 
