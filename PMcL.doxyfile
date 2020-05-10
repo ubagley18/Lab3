@@ -340,7 +340,7 @@ EXTRACT_PRIVATE = YES
 # If the EXTRACT_STATIC tag is set to YES all static members of a file
 # will be included in the documentation.
 
-EXTRACT_STATIC = NO
+EXTRACT_STATIC = YES
 
 # If the EXTRACT_LOCAL_CLASSES tag is set to YES classes (and structs)
 # defined locally in source files will be included in the documentation.
@@ -626,7 +626,7 @@ WARN_LOGFILE =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT = ../../sources ../../Generated_Code ../doxygen ../../Static_Code source Modules Modules\Flash 
+INPUT = source Modules\Flash Modules\LEDs Modules\Packet Modules\UART ../../sources ../../Generated_Code ../doxygen ../../Static_Code 
 
 
 # This tag can be used to specify the character encoding of the source files

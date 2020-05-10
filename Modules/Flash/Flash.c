@@ -141,7 +141,7 @@ bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
       return true;
     }
     //shift down the memoryAlloc until Flash Memory is empty
-    memoryAlloc = memoryAlloc << size;
+    memoryAlloc = memoryAlloc << size; // has >> instead of <<
   }
   return false;
 }
@@ -219,7 +219,7 @@ bool Flash_Write16(volatile uint16_t* const address, const uint16_t data)
   uint32_t newAddress = (uint32_t)address; //declare new address as 32bit
 
   //check if the address is aligned with word
-  if((newAddress % 4) == WORD_ALIGNED)
+  if(((uint32_t)address % 4) == WORD_ALIGNED)
   {
     word.s.Lo = data; //store data into low 16-bit of union
     word.s.Hi = _FH(newAddress+2); //read from flash into high 16-bit of union

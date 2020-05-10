@@ -58,8 +58,7 @@ bool LEDs_Init(void)
  */
 void LEDs_On(const LED_t color)
 {
-	//GPIO_PortClear(GPIOE,0x4000000); // setting port 26 to 0
-	GPIO_PortClear(GPIOE,color);
+	GPIO_PortClear(GPIOE,0x4000000); // setting port 26 to 0
 }
 
 /*! @brief Turns off an LED.
@@ -69,8 +68,8 @@ void LEDs_On(const LED_t color)
  */
 void LEDs_Off(const LED_t color)
 {
-	//GPIO_PortSet(GPIOE,0x4000000); // setting port 26 to 1
-	GPIO_PortSet(GPIOE,color);
+	GPIO_PortSet(GPIOE,0x4000000); // setting port 26 to 1
+
 }
 
 /*! @brief Toggles an LED.
@@ -80,6 +79,5 @@ void LEDs_Off(const LED_t color)
  */
 void LEDs_Toggle(const LED_t color)
 {
-	//GPIO_PortToggle(GPIOE,0x4000000);
-	GPIO_PortToggle(GPIOE,color);
+	GPIO_PortToggle(GPIOE,0x4000000);
 }

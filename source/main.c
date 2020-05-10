@@ -1,6 +1,6 @@
 /*!
-** @file main.c
-** @version 1.0
+** @file
+** @version 3.0
 ** @brief
 **         Main module.
 **         This module implements serial port (USB) communications with a PC.
@@ -16,6 +16,7 @@
 */
 /* MODULE main */
 
+// TODO: Upgrade to Lab 3 functionality (copy Lab 2 main and use that as a starting point).
 
 #include "clock_config.h"
 #include "pin_mux.h"
@@ -155,7 +156,7 @@ static bool MCUInit(void)
 	}
 
 	Mcu_Nb.l = 1291; // Init student number to fill union
-	Mcu_Md.l = 1234; // Init MCUMode
+	Mcu_Md.l = 1; // Init MCUMode
 
 	return true;
 }
@@ -202,12 +203,12 @@ static bool HandleNumberPacket(void)
 static bool HandleModePacket(void)
 {
 	if ((Packet_Parameter1 == 1) && (Packet_Parameter2 == 0) && (Packet_Parameter3 == 0))
-		return  Packet_Put(NUMBER_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
+		return  Packet_Put(MODE_CMD, 1, NvMCUMd->s.Lo, NvMCUMd->s.Hi);
 
 	else if ((Packet_Parameter1 == 2))
 	{
 		Flash_Write16((uint16_t *)&NvMCUMd->l, Packet_Parameter23);
-		Packet_Put(NUMBER_CMD, 2, Packet_Parameter2, Packet_Parameter3);
+		Packet_Put(MODE_CMD, 2, Packet_Parameter2, Packet_Parameter3);
 
 		return true;
 	}

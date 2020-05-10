@@ -98,6 +98,14 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a82437eff368716c682ca7a082bba1357"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_flash_8c.html#a82437eff368716c682ca7a082bba1357">LaunchCommand</a> (<a class="el" href="struct_f_c_c_o_b__t.html">FCCOB_t</a> *commonCommandObject)</td></tr>
+<tr class="separator:a82437eff368716c682ca7a082bba1357"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fc992308ad53593bdc6f6e015c2924c"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_flash_8c.html#a0fc992308ad53593bdc6f6e015c2924c">WritePhrase</a> (const uint32_t address, const uint64union_t phrase)</td></tr>
+<tr class="separator:a0fc992308ad53593bdc6f6e015c2924c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04fd4b98ef4ea1b033801d9c0d574849"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_flash_8c.html#a04fd4b98ef4ea1b033801d9c0d574849">EraseSector</a> (const uint32_t address)</td></tr>
+<tr class="separator:a04fd4b98ef4ea1b033801d9c0d574849"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac37c5dc906e2c2635d9d8ccda0e4af8d"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_flash_8c.html#ac37c5dc906e2c2635d9d8ccda0e4af8d">ModifyPhrase</a> (const uint32_t address, const uint64union_t phrase)</td></tr>
+<tr class="separator:ac37c5dc906e2c2635d9d8ccda0e4af8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5782279b5e558cafc2f135c0a1177d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_flash_8c.html#aa5782279b5e558cafc2f135c0a1177d3">Flash_Init</a> (void)</td></tr>
 <tr class="memdesc:aa5782279b5e558cafc2f135c0a1177d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the Flash module.  <a href="_flash_8c.html#aa5782279b5e558cafc2f135c0a1177d3">More...</a><br /></td></tr>
 <tr class="separator:aa5782279b5e558cafc2f135c0a1177d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -209,6 +217,32 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a04fd4b98ef4ea1b033801d9c0d574849"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04fd4b98ef4ea1b033801d9c0d574849">&#9670;&nbsp;</a></span>EraseSector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool EraseSector </td>
+          <td>(</td>
+          <td class="paramtype">const uint32_t&#160;</td>
+          <td class="paramname"><em>address</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a50871aff0f5af1e092aea3ed2545cf72"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a50871aff0f5af1e092aea3ed2545cf72">&#9670;&nbsp;</a></span>Flash_AllocateVar()</h2>
 
@@ -408,6 +442,104 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a82437eff368716c682ca7a082bba1357"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82437eff368716c682ca7a082bba1357">&#9670;&nbsp;</a></span>LaunchCommand()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool LaunchCommand </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_f_c_c_o_b__t.html">FCCOB_t</a> *&#160;</td>
+          <td class="paramname"><em>commonCommandObject</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac37c5dc906e2c2635d9d8ccda0e4af8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac37c5dc906e2c2635d9d8ccda0e4af8d">&#9670;&nbsp;</a></span>ModifyPhrase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool ModifyPhrase </td>
+          <td>(</td>
+          <td class="paramtype">const uint32_t&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64union_t&#160;</td>
+          <td class="paramname"><em>phrase</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0fc992308ad53593bdc6f6e015c2924c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fc992308ad53593bdc6f6e015c2924c">&#9670;&nbsp;</a></span>WritePhrase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool WritePhrase </td>
+          <td>(</td>
+          <td class="paramtype">const uint32_t&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64union_t&#160;</td>
+          <td class="paramname"><em>phrase</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a40c0a7a3bb9117ece5fd309c3ba8e177"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a40c0a7a3bb9117ece5fd309c3ba8e177">&#9670;&nbsp;</a></span>ERASE</h2>
@@ -499,7 +631,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_f2541a3b18981391fa76fac5599e978a.html">Modules</a></li><li class="navelem"><a class="el" href="dir_f67725f2cf32af87e85d269abe0cb567.html">Flash</a></li><li class="navelem"><a class="el" href="_flash_8c.html">Flash.c</a></li>
-    <li class="footer">Generated on Mon Apr 27 2020 19:52:12 for Lab 2 by
+    <li class="footer">Generated on Mon Apr 27 2020 23:41:27 for Lab 2 by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.16 </li>
   </ul>
