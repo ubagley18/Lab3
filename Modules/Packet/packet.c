@@ -12,7 +12,6 @@
 #include "packet.h"
 #include "UART\UART.h"
 
-//
 
 // Packet structure
 
