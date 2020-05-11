@@ -36,17 +36,17 @@ bool LEDs_Init(void)
 	CLOCK_EnableClock(kCLOCK_PortB);
 
 	//enabling ports and pins for each LED
-	if (PORT_SetPinConfig(PORTB,22, &LED_PORT_PIN_CONFIG) |
-		PORT_SetPinConfig(PORTB,21, &LED_PORT_PIN_CONFIG) |
-		PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG))
-	{
-		if (GPIO_PinInit(GPIOB, 22, &LED_GPIO_CONFIG) |
-			GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG) |
-			GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG))
-		{
-			return true;
-		}
-	}
+	PORT_SetPinConfig(PORTB,22, &LED_PORT_PIN_CONFIG);
+	PORT_SetPinConfig(PORTB,21, &LED_PORT_PIN_CONFIG);
+	PORT_SetPinConfig(PORTE,26, &LED_PORT_PIN_CONFIG);
+
+	GPIO_PinInit(GPIOB, 22, &LED_GPIO_CONFIG);
+	GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG);
+	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
+
+	return true;
+
+
 
 	return false;
 }
