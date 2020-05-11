@@ -45,10 +45,6 @@ bool LEDs_Init(void)
 	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
 
 	return true;
-
-
-
-	return false;
 }
 
 

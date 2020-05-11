@@ -130,4 +130,3 @@ void FTM0_IRQHandler(void)
 		(*UserFunction)(UserArguments);
 	}
 }
-
