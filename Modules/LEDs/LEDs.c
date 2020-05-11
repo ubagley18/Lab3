@@ -1,3 +1,8 @@
+/*!
+**  @addtogroup LEDs_module LEDs module documentation
+**  @{
+*/
+/* MODULE LEDs */
 /*! @file LEDs.c
  *
  *  @brief Routines to access the LEDs on the FRDM-K64F.
@@ -84,3 +89,8 @@ void LEDs_Toggle(const LED_t color)
 		GPIO_PortToggle(GPIOE,color);
 	}
 }
+
+/* END LEDs */
+/*!
+** @}
+*/

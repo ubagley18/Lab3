@@ -1,3 +1,8 @@
+/*!
+**  @addtogroup packet_module packet module documentation
+**  @{
+*/
+/* MODULE packet */
 /*! @file packet.c
  *
  *  @brief Routines to implement packet encoding and decoding for the serial port.
@@ -107,3 +112,8 @@ bool Packet_Put(const uint8_t command, const uint8_t parameter1, const uint8_t p
 
 		return false;
 }
+
+/* END packet */
+/*!
+** @}
+*/

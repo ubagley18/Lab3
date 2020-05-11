@@ -1,3 +1,8 @@
+/*!
+**  @addtogroup PIT_module PIT module documentation
+**  @{
+*/
+/* MODULE PIT */
 /*! @file PIT.c
  *
  *  @brief Routines for controlling Periodic Interrupt Timer (PIT).
@@ -96,3 +101,7 @@ void PIT0_IRQHandler(void)
 		(*UserFunction)(UserArguments);
 }
 
+/* END PIT */
+/*!
+** @}
+*/

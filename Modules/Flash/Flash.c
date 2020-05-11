@@ -1,3 +1,8 @@
+/*!
+**  @addtogroup Flash_module Flash module documentation
+**  @{
+*/
+/* MODULE Flash */
 /*! @file Flash.c
  *
  *  @brief Routines for erasing and writing to the Flash.
@@ -274,3 +279,8 @@ static bool EraseSector(const uint32_t address)
 	erase.address.combined = address;
 	return LaunchCommand(&erase);
 }
+
+/* END Flash */
+/*!
+** @}
+*/

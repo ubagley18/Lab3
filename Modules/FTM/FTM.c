@@ -1,3 +1,8 @@
+/*!
+**  @addtogroup FTM_module FTM module documentation
+**  @{
+*/
+/* MODULE FTM */
 /*! @file
  *
  *  @brief Routines for setting up the FlexTimer module (FTM).
@@ -130,3 +135,8 @@ void FTM0_IRQHandler(void)
 		(*UserFunction)(UserArguments);
 	}
 }
+
+/* END FTM */
+/*!
+** @}
+*/

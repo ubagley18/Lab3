@@ -63,7 +63,7 @@ bool RTC_Init(void (*userFunction)(void*), void* userArguments)
   RTC->CR |= RTC_CR_OSCE_MASK;
 
   // Then wait oscillator startup time before enabling TCE
-  for(i = 0; i = 100000; i++); //1000ms in us
+  for (int i = 0; i <= 100000; i++) {} //1000ms in us
 
   // Enable Time Counter (this will make the TSR and TPR registers increment but non-writable)
   RTC->SR |= RTC_SR_TCE_MASK;
