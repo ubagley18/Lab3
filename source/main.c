@@ -52,14 +52,7 @@ const uint32_t BAUD_RATE = 115200;
 // Public Global variables
 TPacket Packet;
 
-TFTMChannel FTM_Timer = {
-		0, 				//channel
-		CLOCK_EnableClock(kCLOCK_McgFixedFreqClk),
-		TIMER_FUNCTION_OUTPUT_COMPARE, //timer function
-		TIMER_OUTPUT_HIGH, //ioType
-		FTMCallback, //User function
-		NULL, //User arguments
-};
+
 
 
 // Private global variables
@@ -171,7 +164,14 @@ void RTCCallback(void* arg);
  */
 void FTMCallback(void* arg);
 
-
+TFTMChannel FTM_Timer = {
+		0, 				//channel
+		kCLOCK_Ftm0,
+		TIMER_FUNCTION_OUTPUT_COMPARE, //timer function
+		TIMER_OUTPUT_HIGH, //ioType
+		FTMCallback, //User function
+		NULL, //User arguments
+};
 
 static bool SendStartupPackets(void)
 {
@@ -224,15 +224,15 @@ static bool MCUInit(void)
 			Flash_Init() &&
 			LEDs_Init() &&
 			//FlashAllocation_Init() &&
-			//PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL); //&&
-			RTC_Init(RTCCallback, NULL);// &&
-			//FTM_Init();
+			PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL) &&
+			RTC_Init(RTCCallback, NULL) &&
+			FTM_Init();
 
 	// SystemCoreClock from system_MK64F12.c
 	if (init)
 	{
-		PIT_Set(500000000, false); //PIT timer to an interval of 500 ms
-		FTM_Set (&FTMTimer);
+		PIT_Set(500000000, true); //PIT timer to an interval of 500 ms
+		FTM_Set (&FTM_Timer);
 
 
 		Mcu_Nb.l = 1291; // Init student number to fill union

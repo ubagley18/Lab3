@@ -19,7 +19,7 @@
 #include "PIT\PIT.h"
 
 
-static uint32_t ModuleClk; 	// module clock.
+static uint32_t PIT_Clk; 	// module clock.
 static void (*UserFunction)(void *); 	// user call back function.
 static void * UserArguments; 			// user call back function arguments.
 
@@ -37,21 +37,23 @@ static void * UserArguments; 			// user call back function arguments.
 bool PIT_Init(const uint32_t moduleClk, void (*userFunction)(void*), void* userArguments)
 {
 	// values of param global
-	ModuleClk = moduleClk;
+	PIT_Clk = moduleClk;
 	UserFunction = userFunction;
 	UserArguments = userArguments;
 
 	// page --> 1117
 	CLOCK_EnableClock(kCLOCK_Pit0); //Clock Enable
-	PIT->MCR &= ~PIT_MCR_MDIS_MASK; //writing 0 to  MCR[MDIS] to activate the PIT module
+	//PIT->MCR &= ~PIT_MCR_MDIS_MASK; //writing 0 to  MCR[MDIS] to activate the PIT module
 	PIT->MCR &= PIT_MCR_FRZ_MASK; // if device enters debug mode, freeze the PIT timer
 
 	PIT_Enable(true);
-
-	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE_MASK; // enabling timer interrupts.
+	//PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE_MASK; // enabling timer interrupts.
 
 	NVIC_ClearPendingIRQ(PIT0_IRQn); //clearing pending interrupts
 	NVIC_EnableIRQ(PIT0_IRQn); // enable interrupts
+
+
+	//PIT->CHANNEL[0].TFLG |= PIT_TFLG_TIF_MASK;
 
 	return true;
 }
@@ -65,15 +67,25 @@ bool PIT_Init(const uint32_t moduleClk, void (*userFunction)(void*), void* userA
  */
 void PIT_Set(const uint32_t period, const bool restart)
 {
-	// LDVAL register trigger Calculation --> formula from pg.1117
-	uint32_t triggerValue = ((ModuleClk * period)/1e9) - 1;
+  //module clock = 120 000 000
+  //preiod = 500 000 000
+  long double periodInSeconds, clockFreq, moduleClkTime,clockTime, PIT_Clk_MHz;
 
-	PIT->CHANNEL[0].LDVAL = triggerValue; //as per page. 1117
+
+  periodInSeconds = (period/1e9);
+  PIT_Clk_MHz = PIT_Clk/1e6;
+
+  //To find PIT_LDVAL0 frequency, pg 1347 K70 doc:
+  moduleClkTime = (1/PIT_Clk_MHz);
+  clockTime = (moduleClkTime/(periodInSeconds*1e6));
+  clockFreq = (1/clockTime) - 1;
 
 	if(restart)
 	{
 		PIT_Enable(false); // Disabled
+		PIT->CHANNEL[0].LDVAL = (uint32_t)(clockFreq); //as per page. 1117
 		PIT_Enable(true); // Enabled
+		PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE_MASK; // enabling timer interrupts
 	}
 
 }
