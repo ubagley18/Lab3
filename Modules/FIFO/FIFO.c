@@ -14,6 +14,10 @@
  */
 
 #include "FIFO.h"
+#include "Critical\critical.h"
+#include "fsl_common.h"
+#include "fsl_port.h"
+
 
 bool FIFO_Init(TFIFO* const fifo)
 {

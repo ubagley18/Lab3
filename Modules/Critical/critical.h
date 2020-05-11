@@ -1,3 +1,7 @@
+/*!
+ *  @addtogroup Critical_module Critical module documentation
+ *  @{
+*/
 /*! @file
  *
  *  @brief Routines to implement protection of critical sections.
@@ -12,9 +16,13 @@
 #define CRITICAL_H
 
 #include <stdint.h>
+#include "critical.h"
 
 extern volatile uint8_t SR_reg;  // Current value of the FAULTMASK register
 extern volatile uint8_t SR_lock; // Lock
+
+volatile uint8_t SR_reg;  // Current value of the FAULTMASK register
+volatile uint8_t SR_lock = 0x00U;      // Lock
 
 // Save status register and disable interrupts
 #define EnterCritical() \
@@ -45,3 +53,7 @@ extern volatile uint8_t SR_lock; // Lock
  } while(0)
 
 #endif
+
+/*!
+ * @}
+*/
