@@ -43,33 +43,35 @@ bool RTC_Init(void (*userFunction)(void*), void* userArguments)
   // Enable clock gate
   CLOCK_EnableClock(kCLOCK_Rtc0);
 
-  // Enable necessary capacitors for the required load capacitance (18pF)
-  RTC->CR |= RTC_CR_SC2P_MASK;   //2pF
-  RTC->CR |= RTC_CR_SC16P_MASK;  //16pF
 
-  // Check Time Invalid Flag and clear if set
-  if (RTC->SR & RTC_SR_TIF_MASK)
+  RTC->CR = RTC_CR_SWR_MASK;
+  if (RTC->CR == RTC_CR_SWR_MASK)
   {
-	RTC_Set(0, 0, 0);
+  	RTC->CR &= ~RTC_CR_SWR_MASK;
+
+  	RTC->TSR = 0;
+  	// Enable necessary capacitors for the required load capacitance (6pF)
+		RTC->CR |= RTC_CR_SC2P_MASK;   //2pF
+		RTC->CR |= RTC_CR_SC4P_MASK;   //4pF
+		// Enable Oscillator clock of 32.768 kHz
+		RTC->CR |= RTC_CR_OSCE_MASK;
+
+		// Then wait oscillator startup time before enabling TCE
+		for (int i = 0; i <= 1000000; i++) {} //1000ms
+
+		RTC->LR &= ~RTC_LR_CRL_MASK;
   }
 
   // Enable Time Seconds Interrupt
-  RTC->IER |= RTC_IER_TSIE_MASK;
+  RTC->IER = RTC_IER_TSIE_MASK;
+
+
+
+  NVIC_ClearPendingIRQ(RTC_Seconds_IRQn);  // Clear pending interrupts on the RTC timer
+  NVIC_EnableIRQ(RTC_Seconds_IRQn);  // Enable RTC Interrupt Service Routine
 
   // Enable Time Counter (this will make the TSR and TPR registers increment but non-writable)
   RTC->SR |= RTC_SR_TCE_MASK;
-
-  // Enable Oscillator clock of 32.768 kHz
-  RTC->CR |= RTC_CR_OSCE_MASK;
-
-  // Then wait oscillator startup time before enabling TCE
-  for (int i = 0; i <= 100000; i++) {} //1000ms in us
-
-  // Enable Time Counter (this will make the TSR and TPR registers increment but non-writable)
-  RTC->SR |= RTC_SR_TCE_MASK;
-
-  NVIC_ClearPendingIRQ(RTC_IRQn);  // Clear pending interrupts on the RTC timer
-  NVIC_EnableIRQ(RTC_IRQn);  // Enable RTC Interrupt Service Routine
 
   return true;
 }
@@ -80,6 +82,7 @@ void RTC_Set(const uint8_t hours, const uint8_t minutes, const uint8_t seconds)
 	uint32_t timeInSeconds; // combined time of hours, minutes and seconds in seconds
 
 	RTC->SR &= ~RTC_SR_TCE_MASK; // disable time counter so TSR can be written to
+	RTC->TPR = 0;
 
 	// Convert time set inputs into seconds and load into TSR register
 	timeInSeconds = (hours*3600) + (minutes*60) + seconds;
@@ -108,14 +111,12 @@ void RTC_Get(uint8_t* const hours, uint8_t* const minutes, uint8_t* const second
  *  The user callback function will be called.
  *  @note Assumes the RTC has been initialized.
  */
-void __attribute__ ((interrupt)) RTC_ISR(void){
-
+void RTC_Seconds_IRQHandler(void)
+{
   //call the function that was passed in RTC init
-  if(RTC_Callback){
-      RTC_Callback(RTC_UserArguments);
-  }
-
-};
+  if (RTC_Callback)
+     (*RTC_Callback)(RTC_UserArguments);
+}
 
 /* END RTC */
 /*!

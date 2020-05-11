@@ -49,6 +49,10 @@ bool LEDs_Init(void)
 	GPIO_PinInit(GPIOB, 21, &LED_GPIO_CONFIG);
 	GPIO_PinInit(GPIOE, 26, &LED_GPIO_CONFIG);
 
+	LEDs_Off(LED_RED);
+	LEDs_Off(LED_BLUE);
+	LEDs_Off(LED_GREEN);
+
 	return true;
 }
 

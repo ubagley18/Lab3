@@ -214,10 +214,10 @@ static bool MCUInit(void)
 	init =	Packet_Init(SystemCoreClock, BAUD_RATE) &&
 			Flash_Init() &&
 			LEDs_Init() &&
-			FlashAllocation_Init() &&
-			PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL) &&
-			RTC_Init(RTCCallback, NULL) &&
-			FTM_Init();
+			//FlashAllocation_Init() &&
+			//PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL); //&&
+			RTC_Init(RTCCallback, NULL);// &&
+			//FTM_Init();
 
 	// SystemCoreClock from system_MK64F12.c
 	if (init)
@@ -433,7 +433,7 @@ int main(void)
 	{
 		if (Packet_Get())
 		{
-			LEDs_On(LED_BLUE);
+			//LEDs_On(LED_BLUE);
 			//FTM_StartTimer(); // what args do I pass here? set up timer channel?
 			HandlePackets();
 		}
