@@ -149,22 +149,26 @@ bool Flash_AllocateVar(volatile void** variable, const uint8_t size)
 
 static bool LaunchCommand(FCCOB_t* commonCommandObject)
 {
+	//clearing errors
+	FTFE->FSTAT = FTFE_FSTAT_ACCERR_MASK | FTFE_FSTAT_FPVIOL_MASK;
+
 	// write parameters into registers with big endian notation
-  FTFE->FCCOB0 = commonCommandObject->command;
-  FTFE->FCCOB1 = commonCommandObject->address.separate.flashAddress2;
-  FTFE->FCCOB2 = commonCommandObject->address.separate.flashAddress1;
-  FTFE->FCCOB3 = commonCommandObject->address.separate.flashAddress0;
-  FTFE->FCCOB4 = commonCommandObject->data.separate.dataByte7;
-  FTFE->FCCOB5 = commonCommandObject->data.separate.dataByte6;
-  FTFE->FCCOB6 = commonCommandObject->data.separate.dataByte5;
-  FTFE->FCCOB7 = commonCommandObject->data.separate.dataByte4;
-  FTFE->FCCOB8 = commonCommandObject->data.separate.dataByte3;
-  FTFE->FCCOB9 = commonCommandObject->data.separate.dataByte2;
-  FTFE->FCCOBA = commonCommandObject->data.separate.dataByte1;
-  FTFE->FCCOBB = commonCommandObject->data.separate.dataByte0;
+	FTFE->FCCOB0 = commonCommandObject->command;
+	FTFE->FCCOB1 = commonCommandObject->address.separate.flashAddress2;
+	FTFE->FCCOB2 = commonCommandObject->address.separate.flashAddress1;
+	FTFE->FCCOB3 = commonCommandObject->address.separate.flashAddress0;
+	FTFE->FCCOB4 = commonCommandObject->data.separate.dataByte7;
+	FTFE->FCCOB5 = commonCommandObject->data.separate.dataByte6;
+	FTFE->FCCOB6 = commonCommandObject->data.separate.dataByte5;
+	FTFE->FCCOB7 = commonCommandObject->data.separate.dataByte4;
+	FTFE->FCCOB8 = commonCommandObject->data.separate.dataByte3;
+	FTFE->FCCOB9 = commonCommandObject->data.separate.dataByte2;
+	FTFE->FCCOBA = commonCommandObject->data.separate.dataByte1;
+	FTFE->FCCOBB = commonCommandObject->data.separate.dataByte0;
 
 	FTFE->FSTAT = FTFE_FSTAT_CCIF_MASK; // clear the CCIF to launch the command
-	// WHAT DOES THE DIAGRAM ON P702 MEAN BY MORE PARAMETERS?
+
+	while(!(FTFE->FSTAT & FTFE_FSTAT_CCIF_MASK)) {}
 
 	return true;
 }
