@@ -19,9 +19,9 @@
  */
 typedef enum
 {
-  LED_RED,
-  LED_GREEN,
-  LED_BLUE
+  LED_RED = 0x400000,
+  LED_GREEN = 0x4000000,
+  LED_BLUE = 0x200000,
 } LED_t;
 
 /*! @brief Sets up the LEDs before first use.
