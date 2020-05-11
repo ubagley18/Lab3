@@ -303,17 +303,17 @@ static void HandlePackets(void)
 int main(void)
 {
 	MCUInit();
-	bool success;
+	//bool success;
 
-	success = Flash_AllocateVar((volatile void**)&NvMCUNb, sizeof(*NvMCUNb));
+	//success = Flash_AllocateVar((volatile void**)&NvMCUNb, sizeof(*NvMCUNb));
 
-	if (success && (NvMCUNb->l == 0xFFFF))
-		Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
+	//if (success && (NvMCUNb->l == 0xFFFF))
+		//Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
 
-	success = Flash_AllocateVar((volatile void**)&NvMCUMd, sizeof(*NvMCUMd));
+	//success = Flash_AllocateVar((volatile void**)&NvMCUMd, sizeof(*NvMCUMd));
 
-	if (success && (NvMCUNb->l == 0xFFFF))
-		Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
+	//if (success && (NvMCUNb->l == 0xFFFF))
+		//Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
 
 	for (;;)
 	{
