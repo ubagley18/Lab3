@@ -52,6 +52,15 @@ const uint32_t BAUD_RATE = 115200;
 // Public Global variables
 TPacket Packet;
 
+TFTMChannel FTM_Timer = {
+		0, 				//channel
+		CLOCK_EnableClock(kCLOCK_McgFixedFreqClk),
+		TIMER_FUNCTION_OUTPUT_COMPARE, //timer function
+		TIMER_OUTPUT_HIGH, //ioType
+		FTMCallback, //User function
+		NULL, //User arguments
+};
+
 
 // Private global variables
 static uint16union_t Mcu_Nb; // MCU number
@@ -222,6 +231,10 @@ static bool MCUInit(void)
 	// SystemCoreClock from system_MK64F12.c
 	if (init)
 	{
+		PIT_Set(500000000, false); //PIT timer to an interval of 500 ms
+		FTM_Set (&FTMTimer);
+
+
 		Mcu_Nb.l = 1291; // Init student number to fill union
 		Mcu_Md.l = 1; // Init MCUMode
 
@@ -433,8 +446,8 @@ int main(void)
 	{
 		if (Packet_Get())
 		{
-			//LEDs_On(LED_BLUE);
-			//FTM_StartTimer(); // what args do I pass here? set up timer channel?
+			LEDs_On(LED_BLUE);
+			FTM_StartTimer(&FTM_Timer);
 			HandlePackets();
 		}
 	}

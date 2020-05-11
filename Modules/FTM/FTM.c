@@ -3,14 +3,14 @@
 **  @{
 */
 /* MODULE FTM */
-/*! @file
+/*! @file FTM.c
  *
  *  @brief Routines for setting up the FlexTimer module (FTM).
  *
  *  This contains the functions for operating the FlexTimer module (FTM).
  *
- *  @author PMcL
- *  @date 2015-09-04
+ *  @author Uldis Bagley and Prashant Shrestha
+ *  @date 2020-05-11
  */
 
 // new types
