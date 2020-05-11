@@ -24,6 +24,16 @@
 #define HALF_WORD 2
 #define WORD 4
 
+/** @struct FCCOB_t
+ *  @brief This structure has variables to contain a command, a phrase and it's relevant flash address space
+ *  to be stored while a sector is being read from or erased
+ *  @var FCCOB_t::command
+ *  Member 'command' is the command to be executed
+ *  @var FCCOB_t::address
+ *  Member 'address' contains the address of the phrase to be written
+ *  @var FCCOB_t::data
+ *  Member 'data' contains the data in the phrase to be written to flash
+ */
 typedef struct
 {
   uint8_t command;
