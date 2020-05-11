@@ -12,6 +12,7 @@
 #define CRITICAL_H
 
 #include <stdint.h>
+#include "critical.h"
 
 extern volatile uint8_t SR_reg;  // Current value of the FAULTMASK register
 extern volatile uint8_t SR_lock; // Lock
