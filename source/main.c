@@ -1,5 +1,5 @@
 /*!
-** @file
+** @file main.c
 ** @version 3.0
 ** @brief
 **         Main module.
@@ -8,31 +8,26 @@
 **         The command handlers for a several commands (defined in the protocol) are implemented.
 **
 ** @author Uldis Bagley and Prashant Shrestha
-** @date 2020-04-7
+** @date 2020-05-12
 */
 /*!
 **  @addtogroup main_module main module documentation
 **  @{
 */
 /* MODULE main */
-
-// TODO: Upgrade to Lab 3 functionality (copy Lab 2 main and use that as a starting point).
-
 #include "clock_config.h"
 #include "pin_mux.h"
 
-// New types
+
 #include "Types\types.h"
-
-// Serial Communication Interface
 #include "UART\UART.h"
-
-// Packet handling
 #include "Packet\packet.h"
-
 #include "Flash\Flash.h"
-
 #include "LEDs\LEDs.h"
+#include "FTM\FTM.h"
+#include "RTC\RTC.h"
+#include "PIT\PIT.h"
+
 
 
 // Commands
@@ -43,6 +38,7 @@
 #define MODE_CMD 0x0D
 #define FLASH_PROGRAM_CMD 0x07
 #define FLASH_READ_CMD 0x08
+#define TIME_CMD 0x0C
 
 // Version number
 const uint8_t VERSION_MAJOR = 0x01; //1
@@ -73,6 +69,13 @@ volatile uint16union_t *NvMCUMd;	// The non-volatile MCU mode
  *  @note Assumes that MCUInit has been called successfully.
  */
 static bool SendStartupPackets(void);
+
+
+/*! @brief sets initial values for MCU number and MCU Mode.
+ *
+ *  @return bool - TRUE if allocation is successful.
+ */
+static bool FlashAllocation_Init(void);
 
 
 /*! @brief Initializes the MCU by initializing all variables and then sending startup packets to the PC.
@@ -111,16 +114,16 @@ static bool HandleNumberPacket(void);
 static bool HandleModePacket(void);
 
 
-/*! @brief
+/*! @brief Programs a byte into Flash
  *
- *  @return bool -
+ *  @return bool - TRUE if byte written successfully
  */
 static bool HandleFlashProgram(void);
 
 
-/*! @brief
+/*! @brief Reads data from Flash
  *
- *  @return bool -
+ *  @return bool - TRUE if data read successfully
  */
 static bool HandleFlashRead();
 
@@ -130,6 +133,34 @@ static bool HandleFlashRead();
  *  @note Assumes that MCUInit has been called successfully.
  */
 static void HandlePackets(void);
+
+
+/* @brief Toggles green LED.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+void PITCallback(void* arg);
+
+
+/* @brief Turns off blue LED.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+void UARTTimerCallback(void* arg);
+
+
+/* @brief Toggles red LED.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+void RTCCallback(void* arg);
+
+
+/* @brief Toggles blue LED.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+void FTMCallback(void* arg);
 
 
 
@@ -143,23 +174,63 @@ static bool SendStartupPackets(void)
 	return true;
 }
 
+static bool FlashAllocation_Init()
+{
+	bool success;
+
+	  if (Flash_AllocateVar((volatile void **)&NvMCUNb, sizeof(*NvMCUNb)))
+	  {
+	    if (NvMCUNb->l == 0xFFFF)
+	    {
+	      success = Flash_Write16((uint16_t volatile *) &NvMCUNb->l, Mcu_Nb.l);
+	    }
+	  }
+	  else
+	  {
+	    success = false;
+	  }
+	  if (Flash_AllocateVar((volatile void **)&NvMCUMd, sizeof(*NvMCUMd)))
+	  {
+	    if (NvMCUMd->l == 0xFFFF)
+	    {
+	      success = Flash_Write16((uint16_t volatile *) &NvMCUMd->l, Mcu_Md.l);
+	    }
+	  }
+	  else
+	  {
+	    success = false;
+	  }
+	  return success;
+}
+
 
 static bool MCUInit(void)
 {
+	bool init;
+
 	BOARD_InitPins();
 	BOARD_InitBootClocks();
 
+	init =	Packet_Init(SystemCoreClock, BAUD_RATE) &&
+			Flash_Init() &&
+			LEDs_Init() &&
+			FlashAllocation_Init() &&
+			PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL) &&
+			RTC_Init(RTCCallback, NULL) &&
+			FTM_Init();
+
 	// SystemCoreClock from system_MK64F12.c
-	if(Packet_Init(SystemCoreClock, BAUD_RATE) && Flash_Init())
+	if (init)
 	{
-		LEDs_Init();
+		Mcu_Nb.l = 1291; // Init student number to fill union
+		Mcu_Md.l = 1; // Init MCUMode
+
+		return true;
 	}
 
-	Mcu_Nb.l = 1291; // Init student number to fill union
-	Mcu_Md.l = 1; // Init MCUMode
-
-	return true;
+	return false;
 }
+
 
 
 static bool HandleStartupPacket(void)
@@ -244,6 +315,21 @@ static bool HandleFlashRead()
 	return false;
 }
 
+static bool HandleTimePackets()
+{
+	if ((Packet_Parameter1 >= 0 && Packet_Parameter1 <=23) && //Hours
+		(Packet_Parameter2 >= 0 && Packet_Parameter2 <=59) && //Minutes
+		(Packet_Parameter3 >= 0 && Packet_Parameter3 <=59)) //Seconds
+	{
+		RTC_Set(Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		return true;
+	}
+
+	return false;
+
+}
+
+
 
 /* @brief Respond to packets sent from the PC.
  *
@@ -284,6 +370,8 @@ static void HandlePackets(void)
 		case FLASH_READ_CMD:
 			success = HandleFlashRead();
 			break;
+		case TIME_CMD:
+			success = HandleTimePackets();
 
 		default:
 			return;
@@ -297,30 +385,45 @@ static void HandlePackets(void)
 		return;
 }
 
+/* @brief Toggles green LED.
+ *
+ *  @note Assumes that MCUInit has been called successfully.
+ */
+void PITCallback(void* arg)
+{
+	LEDs_Toggle(LED_GREEN);
+}
+
+void UARTTimerCallback(void* arg)
+{
+	LEDs_Off(LED_BLUE);
+}
+
+void RTCCallback(void* arg)
+{
+	LEDs_Toggle(LED_RED);
+}
+
+void FTMCallback(void* arg)
+{
+	LEDs_Toggle(LED_BLUE);
+}
+
 /*!
  * @brief Main function
  */
 int main(void)
 {
 	MCUInit();
-	bool success;
-
-	success = Flash_AllocateVar((volatile void**)&NvMCUNb, sizeof(*NvMCUNb));
-
-	if (success && (NvMCUNb->l == 0xFFFF))
-		Flash_Write16((uint16_t *)NvMCUNb, Mcu_Nb.l);
-
-	success = Flash_AllocateVar((volatile void**)&NvMCUMd, sizeof(*NvMCUMd));
-
-	if (success && (NvMCUNb->l == 0xFFFF))
-		Flash_Write16((uint16_t *)NvMCUMd, Mcu_Md.l);
 
 	for (;;)
 	{
-		UART_Poll();
-
 		if (Packet_Get())
+		{
+			LEDs_On(LED_BLUE);
+			//FTM_StartTimer(); // what args do I pass here? set up timer channel?
 			HandlePackets();
+		}
 	}
 }
 
