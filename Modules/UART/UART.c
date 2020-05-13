@@ -87,7 +87,7 @@ bool UART_InChar(uint8_t* const dataPtr)
 
 bool UART_OutChar(const uint8_t data)
 {
-	if (FIFO_Put(&TxFIFO, data))
+	/*if (FIFO_Put(&TxFIFO, data))
 	{
 		//Enable TIE
 		UART0->C2 &= UART_C2_TIE_MASK;
@@ -103,11 +103,20 @@ bool UART_OutChar(const uint8_t data)
 			return true;
 	}
 	else
-		return false;
+		return false;*/
+	bool success = FIFO_Put(&TxFIFO, data);
+
+  if (success)
+  {
+		UART0->C2 |= UART_C2_TIE_MASK;
+  }
+
+	 return success;
 }
 
-void __attribute__ ((interrupt)) UART_ISR(void)
+void UART0_RX_TX_DriverIRQHandler(void)
 {
+	bool success;
 	// Receive a character
 	if (UART0->C2 & UART_C2_RIE_MASK)
 	{
@@ -116,13 +125,17 @@ void __attribute__ ((interrupt)) UART_ISR(void)
 			FIFO_Put(&RxFIFO, UART0->D);
 	}
 
+
 	// Transmit a character
 	if (UART0->C2 & UART_C2_TIE_MASK)
 	{
 		// Clear TDRE flag by reading the status register
 		if (UART0->S1 & UART_S1_TDRE_MASK)
-			if (!FIFO_Get(&TxFIFO, (uint8_t *)&UART0->D)); // Gets data from TxFIFO if hardware is ready to transmit a packet
-				UART0->C2 ^= ~UART_C2_TIE_MASK; // if FIFO_Get returns false disable TIE
+		{
+			success = FIFO_Get(&TxFIFO, (uint8_t *)&UART0->D);
+			if (!success) // Gets data from TxFIFO if hardware is ready to transmit a packet
+				UART0->C2 &= ~UART_C2_TIE_MASK; // if FIFO_Get returns false disable TIE
+		}
 	}
 
 }

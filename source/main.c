@@ -166,7 +166,7 @@ void FTMCallback(void* arg);
 
 TFTMChannel FTM_Timer = {
 		0, 				//channel
-		kCLOCK_Ftm0,
+		DEFAULT_SYSTEM_CLOCK,
 		TIMER_FUNCTION_OUTPUT_COMPARE, //timer function
 		TIMER_OUTPUT_HIGH, //ioType
 		FTMCallback, //User function
@@ -224,14 +224,14 @@ static bool MCUInit(void)
 			Flash_Init() &&
 			LEDs_Init() &&
 			//FlashAllocation_Init() &&
-			PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL) &&
-			RTC_Init(RTCCallback, NULL) &&
+			//PIT_Init(CLOCK_GetFreq(kCLOCK_BusClk), PITCallback,NULL) &&
+			//RTC_Init(RTCCallback, NULL) &&
 			FTM_Init();
 
 	// SystemCoreClock from system_MK64F12.c
 	if (init)
 	{
-		PIT_Set(500000000, true); //PIT timer to an interval of 500 ms
+		//PIT_Set(500000000, true); //PIT timer to an interval of 500 ms
 		FTM_Set (&FTM_Timer);
 
 
@@ -334,7 +334,7 @@ static bool HandleTimePackets()
 		(Packet_Parameter2 >= 0 && Packet_Parameter2 <=59) && //Minutes
 		(Packet_Parameter3 >= 0 && Packet_Parameter3 <=59)) //Seconds
 	{
-		RTC_Set(Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		//RTC_Set(Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
 		return true;
 	}
 
@@ -393,6 +393,8 @@ static void HandlePackets(void)
 	if ((success) && ((command & PACKET_CMD_ACK) == PACKET_CMD_ACK))
 	{
 		Packet_Put(command, Packet_Parameter1, Packet_Parameter2, Packet_Parameter3);
+		LEDs_On(LED_BLUE);
+		FTM_StartTimer(&FTM_Timer);
 	}
 	else
 		return;
@@ -419,7 +421,7 @@ void RTCCallback(void* arg)
 
 void FTMCallback(void* arg)
 {
-	LEDs_Toggle(LED_BLUE);
+	LEDs_Off(LED_BLUE);
 }
 
 /*!
@@ -446,8 +448,6 @@ int main(void)
 	{
 		if (Packet_Get())
 		{
-			LEDs_On(LED_BLUE);
-			FTM_StartTimer(&FTM_Timer);
 			HandlePackets();
 		}
 	}

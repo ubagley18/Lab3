@@ -21,9 +21,11 @@
 
 bool FIFO_Init(TFIFO* const fifo)
 {
+	EnterCritical();
 	// Initialise variables to 0
 	fifo->Start = fifo->End = fifo->NbBytes = 0;
 
+	ExitCritical();
 	return true;
 }
 

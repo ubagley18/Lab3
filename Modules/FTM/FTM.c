@@ -126,13 +126,16 @@ bool FTM_StartTimer(const TFTMChannel* const aFTMChannel)
 void FTM0_IRQHandler(void)
 {
 
-	//clear flags? CONTROLS[?]
-	//FTM0->CONTROLS[aFTMChannel->channelNb].CnSC &= ~FTM_CnSC_CHF_MASK;
-
-	//call user function
-	if(UserFunction)
+	for (uint8_t channelNb = 0; channelNb < 8; channelNb++)
 	{
-		(*UserFunction)(UserArguments);
+		// Clear interrupt flag for each channel
+		FTM0->CONTROLS[channelNb].CnSC &= ~FTM_CnSC_CHF_MASK;
+		// If channel is set up for output compare (ie. MSnB:MSnA == 01)
+		if (!(FTM0->CONTROLS[channelNb].CnSC & FTM_CnSC_MSB_MASK) &&
+	 (FTM0->CONTROLS[channelNb].CnSC & FTM_CnSC_MSA_MASK))
+		{
+			(*UserFunction)(UserArguments);
+		}
 	}
 }
 
